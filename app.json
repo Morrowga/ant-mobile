@@ -1,0 +1,70 @@
+{
+  "expo": {
+    "name": "Ants",
+    "slug": "ants-mobile",
+    "version": "1.0.0",
+    "scheme": "ants",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#f4f4f4",
+    "splash": {
+      "backgroundColor": "#6c4b36",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.ants.mobile",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Ants uses the camera for the optional check-in selfie.",
+        "NSLocationWhenInUseUsageDescription": "Ants records your location only between check-in and check-out, to confirm attendance.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Ants records your location in the background only while you are checked in. Tracking stops the moment you check out.",
+        "UIBackgroundModes": [
+          "location"
+        ]
+      }
+    },
+    "android": {
+      "package": "com.ants.mobile",
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "CAMERA",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Ants uses the camera for the optional check-in selfie."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true,
+          "locationAlwaysAndWhenInUsePermission": "Ants records your location in the background only while you are checked in. Tracking stops the moment you check out."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#6c4b36"
+        }
+      ],
+      "expo-font",
+      "@react-native-community/datetimepicker"
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}
