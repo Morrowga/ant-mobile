@@ -1,0 +1,456 @@
+{
+  "common": {
+    "loading": "加载中…"
+  },
+  "features": {
+    "profile": {
+      "managerRole": "管理者 — 团队视图可在网页仪表板查看",
+      "employeeRole": "员工",
+      "yourRecords": "我的记录",
+      "certificates": "证书",
+      "certificatesHint": "每月和每年自动颁发",
+      "kudosReceived": "收到的表扬",
+      "kudosHint": "来自管理者的认可",
+      "attendanceHistory": "出勤记录",
+      "attendanceHint": "您的打卡记录",
+      "invoices": "发票",
+      "invoicesHint": "已生成的工资发票",
+      "haveASay": "表达意见",
+      "feedback": "反馈与投诉",
+      "feedbackHint": "可选择匿名",
+      "settings": "设置",
+      "deskLocation": "工位位置",
+      "deskLocationHint": "更新您的打卡位置",
+      "notificationPreferences": "通知偏好",
+      "notificationPreferencesHint": "关闭不需要的通知",
+      "language": "语言",
+      "languageHint": "随时切换回英语",
+      "changePassword": "修改密码",
+      "signOut": "退出登录"
+    },
+    "language": {
+      "title": "显示语言",
+      "description": "您的公司设置了语言，但您可以随时切换回英语。",
+      "useEnglish": "使用英语",
+      "toggleOffHint": "关闭后将切换回{{language}}。",
+      "toggleOffHintNoAssigned": "您的公司尚未指定语言 — 此设置暂无效果。",
+      "error": "无法更新您的语言，请重试。"
+    },
+    "certificates": {
+      "description": "每月末和每年末自动颁发——一份便携的工作记录，无需审批。",
+      "empty": "您的第一张证书将在本月末生成。",
+      "monthlyCertificate": "月度证书",
+      "yearlyCertificate": "年度证书",
+      "save": "保存",
+      "generating": "生成中",
+      "saveCertificate": "保存证书"
+    },
+    "recognitions": {
+      "description": "管理者给您的表扬，同时也会计入您的影响力得分。",
+      "empty": "暂无表扬——收到后将显示在此处。"
+    },
+    "attendanceHistory": {
+      "empty": "暂无出勤记录。",
+      "hoursValue": "{{value}}小时",
+      "open": "进行中"
+    },
+    "invoices": {
+      "pageTitle": "发票",
+      "empty": "暂无发票——公司为某个薪酬周期生成发票后将显示在此处。",
+      "actual": "实际",
+      "scheduled": "计划"
+    },
+    "feedback": {
+      "raiseSomething": "提交意见",
+      "harassmentNote": "骚扰举报将直接发送给公司所有者——管理者无法查看。",
+      "messagePlaceholder": "发生了什么？请在您感到舒适的范围内尽量具体描述。",
+      "submitAnonymously": "匿名提交",
+      "anonymousNote": "您的姓名不会被关联——即使是所有者也无法知晓。",
+      "sendFeedback": "发送反馈",
+      "yourTickets": "我的工单",
+      "noneRaised": "尚未提交任何内容。",
+      "submittedAnonymously": "已匿名提交",
+      "categories": {
+        "workload": "工作量",
+        "workplace": "工作环境",
+        "management": "管理",
+        "harassment": "骚扰",
+        "other": "其他"
+      },
+      "statuses": {
+        "new": "新建",
+        "in_review": "审核中",
+        "resolved": "已解决",
+        "dismissed": "已关闭",
+        "open": "进行中"
+      }
+    },
+    "deskLocation": {
+      "title": "工位位置",
+      "subtitle": "这是您打卡时进行比对的位置 — 更改需要管理者审批。",
+      "updateRequested": "已申请更新",
+      "pendingApproval": "待审批",
+      "submittedWaiting": "已于{{time}}提交 — 等待管理者审批。",
+      "updateYourLocation": "更新工位位置",
+      "usesCurrentLocation": "使用您当前的位置。管理者审批后方可生效。",
+      "requestUpdate": "申请更新",
+      "history": "历史记录",
+      "noLocationSet": "尚未设置工位位置。",
+      "confirmTitle": "申请更新工位位置？",
+      "confirmBody": "将使用您当前的位置。管理者批准后方可生效。",
+      "cancel": "取消",
+      "sendRequest": "发送申请",
+      "sendRequest_pending": "发送中…"
+    },
+    "notificationPreferences": {
+      "subtitle": "出勤、加班、薪资、请假和提醒通知将始终推送 — 这些关系到您的薪资和保障。",
+      "alwaysOn": "始终开启"
+    },
+    "changePassword": {
+      "currentPassword": "当前密码",
+      "newPassword": "新密码",
+      "newPasswordPlaceholder": "至少8个字符",
+      "changePassword": "修改密码"
+    },
+    "knowledge": {
+      "pageTitle": "知识与分享",
+      "newPost": "新帖子",
+      "knowledgeDescription": "公司知识与公告。必读内容需要您的确认。",
+      "sharingDescription": "任何人都可以发布的开放帖子 — 公司所有人均可评论。",
+      "tabs": {
+        "knowledge": "知识库",
+        "sharing": "分享"
+      },
+      "searchPlaceholder": "搜索帖子…",
+      "noPostsFound": "未找到帖子。",
+      "noSharingPostsYet": "暂无分享帖子 — 来发第一篇吧。",
+      "mustRead": "必读"
+    },
+    "knowledgeNew": {
+      "type": "类型",
+      "sharingHint": "所有人均可发帖 — 无需分类，公司所有人都可以评论。",
+      "knowledgeHint": "公司知识，由您的知识设置管理。",
+      "titleLabel": "标题",
+      "titlePlaceholder": "值得分享的内容",
+      "bodyLabel": "正文",
+      "bodyPlaceholder": "像向新队友解释一样来写。",
+      "publish": "发布"
+    },
+    "knowledgePost": {
+      "comments": "评论（{{count}}）",
+      "noComments": "暂无评论 — 来第一个回复吧。",
+      "you": "你",
+      "someone": "某人",
+      "author": "作者",
+      "commentPlaceholder": "添加评论或建议…",
+      "postComment": "发表评论",
+      "acknowledged": "已确认 ✓",
+      "mustReadNote": "这是必读内容。阅读后请确认 — 公司可以看到谁已确认。",
+      "iveReadThis": "我已阅读"
+    },
+    "health": {
+      "pageTitle": "我的健康",
+      "pageDescription": "仅您本人可见。公司只能看到匿名的团队平均数据 — 绝不会看到您的个人记录。",
+      "reminders": "提醒",
+      "allCaughtUp": "全部完成 — 目前没有待处理的内容。",
+      "tapToAnswer": "点击立即回答",
+      "unanswered": "未回答",
+      "answered": "已回答",
+      "todaysCheckins": "今日打卡",
+      "noRemindersSentYet": "今天还没有发送提醒 — 打卡后将显示在此处。",
+      "thisWeek": "本周",
+      "avgWaterPerDay": "每日平均饮水量",
+      "avgMood": "平均情绪",
+      "avgSleepPerDay": "每日平均睡眠时间",
+      "mlValue": "{{value}} ml",
+      "moodValue": "{{value}} / 5",
+      "hoursValue": "{{value}} 小时",
+      "promptTypes": {
+        "sleepCheckin": "睡眠打卡",
+        "moodWaterCheckin": "情绪与饮水打卡"
+      }
+    },
+    "healthCheckin": {
+      "logged": "已记录！",
+      "sleepQuestion": "您昨晚睡了几个小时？",
+      "sleepPrivacyNote": "仅您本人可见 — 绝不会与您的管理者或公司共享。",
+      "requiredToContinue": "继续操作需要回答此问题。",
+      "thanksLogged": "感谢 — 已记录！",
+      "quickCheckin": "快速打卡",
+      "twoQuestionsNote": "两个简单问题 — 只需几秒钟。",
+      "waterQuestion": "您今天喝了多少水？",
+      "mlValue": "{{value}}ml",
+      "moodQuestion": "您现在感觉怎么样？",
+      "moodOptions": {
+        "great": "很好",
+        "good": "好",
+        "okay": "一般",
+        "low": "不太好",
+        "rough": "很差"
+      },
+      "sleepOptions": {
+        "lessThan5": "不足5小时",
+        "fiveToSix": "5~6小时",
+        "sixToSeven": "6~7小时",
+        "sevenToEight": "7~8小时",
+        "eightPlus": "8小时以上"
+      },
+      "submit": "提交"
+    },
+    "today": {
+        "greeting": "你好",
+        "greetingWithName": "你好，{{name}}",
+        "minutesShort": "{{count}}分钟",
+        "hoursMinutesShort": "{{h}}小时{{m}}分钟",
+        "flexibleHoursNote": "弹性工时 — 无固定班次",
+        "shiftWindow": "班次：{{start}} – {{end}}（{{tz}}）",
+        "minutesLeftInShift": "班次还剩{{time}}",
+        "shiftStartsIn": "班次将在{{time}}后开始",
+        "queuedActions": "{{count}}个操作等待同步 — 恢复在线后将自动发送。",
+        "onTheClock": "上班中",
+        "since": "自{{time}}起",
+        "lateBadge": "迟到{{minutes}}",
+        "onTimeBadge": "准时",
+        "trackingActive": "位置追踪中",
+        "trackingOff": "位置追踪已关闭",
+        "outsideDeskArea": "不在工位区域",
+        "checkOut": "下班打卡",
+        "offTheClock": "已下班",
+        "reportAlreadySubmitted": "今日报告已提交 — 明天见。",
+        "partTimeCheckInNote": "打卡后将开始出勤记录。每天只能打卡一次。",
+        "partTimeCheckInNoteNoTracking": "打卡后将开始出勤记录 — 位置仅在出勤期间记录。每天只能打卡一次。",
+        "shiftEndedNote": "今日班次已结束 — 今天无法再打卡。",
+        "tooEarlyNote": "打卡在班次开始前15分钟开放 — 还需等待{{time}}。",
+        "checkInStartsSessionNote": "打卡后将开始出勤记录。",
+        "checkInStartsSessionNoteNoTracking": "打卡后将开始出勤记录 — 位置仅在出勤期间记录。",
+        "checkIn": "上班打卡",
+        "onBreak": "休息中",
+        "onBreakBadge": "休息中",
+        "endBreak": "结束休息",
+        "breakTime": "休息时间",
+        "breakMinutesToday": "今日{{time}}",
+        "noBreakYetToday": "今日暂无",
+        "startBreak": "开始休息",
+        "offlineCheckInQueued": "您当前离线 — 打卡已保存，恢复在线后将自动同步。",
+        "offlineCheckOutQueued": "您当前离线 — 下班打卡已保存，恢复在线后将自动同步。",
+        "checkedInLate": "您迟到了{{minutes}}。",
+        "checkedOutEarly": "您提前{{minutes}}下班。",
+        "markedWorkingOutside": "今日已标记为外出工作 — 离岗提醒已关闭。",
+        "backToDesk": "返回工位",
+        "workingOutsideToday": "今日外出工作",
+        "quickLinks": {
+            "leave": "请假",
+            "overtime": "加班",
+            "history": "记录",
+            "kudos": "表扬"
+        },
+        "thisWeek": "本周",
+        "reportsSubmitted": "已提交报告",
+        "hoursLogged": "已记录工时",
+        "averagePerDay": "每日平均",
+        "kudosReceived": "收到的表扬",
+        "workOutsideModal": {
+            "title": "您今天在外工作吗？",
+            "body": "请简单说明原因，让您的管理者了解情况 — 这将关闭今日的离岗提醒。",
+            "reasonPlaceholder": "例如：拜访客户、居家办公",
+            "no": "否",
+            "yesConfirm": "是，确认"
+        }
+    },
+    "reports": {
+      "pageTitle": "我的报告",
+      "pageDescription": "每天的工作内容记录。报告在午夜锁定 — 仅限当天编辑。",
+      "tabs": {
+        "daily": "日报",
+        "overtime": "加班"
+      },
+      "daily": {
+        "empty": "暂无报告 — 请从主页提交第一份报告。",
+        "editableToday": "今日可编辑",
+        "locked": "已锁定"
+      },
+      "overtime": {
+        "empty": "暂无加班记录。",
+        "closed": "已结束",
+        "inProgress": "进行中",
+        "noSummaryYet": "暂无摘要"
+      }
+    },
+    "invoiceDetail": {
+      "invoice": "发票",
+      "description": "说明",
+      "amount": "金额",
+      "hoursWorked": "工作时长",
+      "perHour": "{{amount}} / 小时",
+      "total": "合计",
+      "calculatedFrom": "根据{{basis}}计算",
+      "actualClockedHours": "实际打卡时间",
+      "scheduledMinusLeave": "计划时间减去请假时间",
+      "generated": "{{time}}生成",
+      "downloadPdf": "下载 PDF",
+      "fileNotAvailable": "文件不可用。",
+      "loadError": "无法加载此发票。"
+    },
+    "reportDetail": {
+      "edit": "编辑",
+      "delete": "删除",
+      "lockedNote": "已锁定 — 报告只能在撰写当天编辑。您的管理者仍可添加评论。",
+      "workdayPace": "工作节奏",
+      "paceUnavailable": "此报告暂无节奏分析 — 提交后不久将显示，适用于 Mid 计划及以上的公司。",
+      "managerComments": "管理者评论",
+      "noComments": "暂无评论。",
+      "saveChanges": "保存更改"
+    },
+    "newReport": {
+      "loading": "加载中…",
+      "minutesShort": "{{count}}分钟",
+      "hoursMinutesShort": "{{h}}小时{{m}}分钟",
+      "answerHealthFirst": "请先完成健康打卡",
+      "multiplePending": "您今天有 {{count}} 个未回答的打卡。",
+      "singlePendingMobile": "只需回答一个简单问题，然后可以直接回到这里。",
+      "answerNow": "立即回答",
+      "actualWorkedNote": "您今天实际工作了 {{time}}（不含休息）。请在下方记录任务 — 总计可以少于但不能超过此时间。",
+      "fillOutToFinish": "请填写今日报告以完成下班打卡。",
+      "entryNumberUpper": "条目 {{number}}",
+      "project": "项目",
+      "timeSpent": "花费时间",
+      "hoursUnit": "小时",
+      "minutesUnit": "分钟",
+      "whatDidYouWorkOn": "您做了什么工作？",
+      "summaryPlaceholder": "请写几句话 — 这是您的管理者和节奏分析将看到的内容。",
+      "overCeiling": "输入总计（{{entered}}）超过了您的实际工作时间（{{actual}}）。请减少条目以符合要求。",
+      "todayInvoice": "今日账单",
+      "addAnotherEntry": "添加条目",
+      "submitAndCheckOut": "提交并下班打卡",
+      "submitReport": "提交报告",
+      "nothingToReport": "今天没有需要汇报的内容",
+      "invoiceDialog": {
+        "title": "今日账单",
+        "loading": "加载中…",
+        "scheduledShift": "计划班次",
+        "timeCheckedIn": "打卡时间",
+        "breakTimeExcluded": "休息时间（不计入）",
+        "lateArrival": "迟到",
+        "none": "无",
+        "unansweredPresenceChecks": "未回答的在岗确认",
+        "deductionsOffNote": "您的公司已关闭无响应扣除。",
+        "creditedHours": "计入工时",
+        "close": "关闭"
+      }
+    },
+    "overtimeDetail": {
+      "closed": "已结束",
+      "inProgress": "进行中",
+      "ended": "{{time}}结束",
+      "stillRunning": "仍在进行",
+      "initiatedBy": "由{{who}}发起",
+      "reason": "原因",
+      "closingSummary": "结束报告",
+      "noSummaryRecorded": "未记录任何摘要。",
+      "notClosedYet": "尚未结束 — 结束此会话前需提交摘要。",
+      "aiSummary": "AI摘要"
+    },
+    "leave": {
+      "requestLeave": "申请请假",
+      "partialDayQuestion": "只请半天或更短时间？",
+      "partialDayExample": "例如：去银行办事需要2小时",
+      "on": "开启",
+      "off": "关闭",
+      "date": "日期",
+      "selectADate": "选择日期",
+      "startTime": "开始时间",
+      "endTime": "结束时间",
+      "selectTime": "选择时间",
+      "firstDay": "第一天",
+      "lastDay": "最后一天",
+      "done": "完成",
+      "sendRequest": "发送申请",
+      "yourRequests": "我的申请",
+      "empty": "暂无请假申请。",
+      "types": {
+        "annual": "年假",
+        "sick": "病假",
+        "unpaid": "无薪假",
+        "other": "其他"
+      },
+      "statuses": {
+        "pending": "待审批",
+        "approved": "已批准",
+        "rejected": "已拒绝"
+      }
+    },
+    "overtime": {
+      "running": "加班中",
+      "since": "自{{time}}起",
+      "reasonLabel": "原因：{{reason}}",
+      "closingSummaryLabel": "这次加班完成了什么？（结束会话必填）",
+      "closingSummaryPlaceholder": "简短的结束报告 — 这是必填项，不可跳过。",
+      "submitAndEnd": "提交报告并结束加班",
+      "approvedForToday": "今日已批准",
+      "startOvertime": "开始加班",
+      "noApprovedToday": "今日无已批准的加班",
+      "submitBelowNoteMobile": "开始加班前需要先提交申请并获得批准 — 可为任意日期（包括今天）在下方提交。",
+      "requestOvertime": "申请加班",
+      "alreadyHaveApproved": "今天已有一个已批准的申请",
+      "alreadyHavePending": "今天已有一个待审批的申请",
+      "tabs": {
+        "requests": "我的申请",
+        "sessions": "历史记录"
+      },
+      "noRequestsYet": "暂无加班申请。",
+      "noClosedSessions": "暂无已结束的加班记录。",
+      "date": "日期",
+      "selectADate": "选择日期",
+      "startTime": "开始时间",
+      "endTime": "结束时间",
+      "selectTime": "选择时间",
+      "done": "完成",
+      "spansNextDayNoteMobile": "此加班跨至次日 — 结束于所选日期的次日。",
+      "whyNeedOvertime": "为什么需要加班？",
+      "reasonPlaceholder": "例如：在明天截止日期前完成Q3报告",
+      "sendRequest": "发送申请",
+      "statuses": {
+        "pending": "待审批",
+        "approved": "已批准",
+        "rejected": "已拒绝"
+      }
+    },
+    "notifications": {
+      "preferences": "偏好设置",
+      "empty": "暂无通知。"
+    },
+    "onboardingChecklist": {
+        "title": "您的第一步",
+        "subtitle": "公司为新员工设置了这些内容。完成后请逐一勾选 — 此列表将保存在您的个人资料中。",
+        "empty": "没有待办事项 — 您已准备就绪。",
+        "done": "已完成",
+        "required": "必填",
+        "optional": "选填",
+        "takeMeToApp": "前往应用"
+    },
+    "consent": {
+        "title": "开始之前",
+        "subtitle": "每项均可单独选择，全部不选也可正常使用。",
+        "backgroundLocationUnavailable": "此预览版本不支持后台位置功能 — 应用打开时出勤功能仍可正常使用。完整后台追踪需要安装正式版应用。",
+        "saveChoices": "保存我的选择",
+        "items": {
+            "locationTitle": "上班期间的位置信息",
+            "locationBody": "位置信息仅在打卡签到至签退期间记录，用于确认出勤。追踪期间，您的手机会显示持续通知 — 这是操作系统的要求，意味着追踪不会静默进行。签退后立即停止。",
+            "healthTitle": "个人健康追踪",
+            "healthBody": "饮水、心情、休息、步数和睡眠 — 仅您本人可见。管理者和公司无法查看您的个人记录；团队只能看到3人以上的匿名平均数据。",
+            "notificationsTitle": "通知",
+            "notificationsBody": "签到提醒、提交日报、休息提示以及公司更新通知。"
+        }
+    },
+    "onboardingDeskLocation": {
+        "title": "固定您的工位",
+        "subtitle": "站在您常用的工作位置，一次性完成固定 — 出勤提醒将以此为基准。",
+        "pinned": "已固定 ✓",
+        "noPinYet": "尚未固定",
+        "repinHere": "在此重新固定",
+        "pinCurrentSpot": "固定当前位置",
+        "continue": "继续",
+        "skipForNow": "暂时跳过"
+    }
+  }
+}

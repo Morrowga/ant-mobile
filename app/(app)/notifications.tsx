@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, router } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 
 import { api } from "@/lib/api-client";
@@ -8,6 +9,7 @@ import { QueryBoundary } from "@/components/query";
 import { Badge, Card, EmptyText, Row, Screen } from "@/components/ui";
 
 export default function Notifications() {
+  const { t, i18n } = useTranslation();
   const qc = useQueryClient();
   const notifications = useQuery({
     queryKey: ["notifications", "me"],
@@ -34,13 +36,13 @@ export default function Notifications() {
     <Screen>
       <Row className="justify-end">
         <Link href="/(app)/notification-preferences" className="font-sansmed text-[13px] text-copper">
-          Preferences
+          {t("features.notifications.preferences")}
         </Link>
       </Row>
       <QueryBoundary query={notifications}>
         {(rows) => (
           <View className="mt-2">
-            {rows.length === 0 && <EmptyText>All quiet.</EmptyText>}
+            {rows.length === 0 && <EmptyText>{t("features.notifications.empty")}</EmptyText>}
             {rows.map((notification) => (
               <Pressable key={notification.id} onPress={() => handlePress(notification)}>
                 <Card className={`mb-2 ${notification.read_at ? "opacity-60" : ""}`}>
@@ -50,7 +52,7 @@ export default function Notifications() {
                   </Row>
                   {notification.body ? <Text className="mt-1 font-sans text-[13px] text-faint">{notification.body}</Text> : null}
                   <Text className="mt-1 font-sans text-[11px] text-faint">
-                    {new Date(notification.created_at).toLocaleString()}
+                    {new Date(notification.created_at).toLocaleString(i18n.language)}
                   </Text>
                 </Card>
               </Pressable>

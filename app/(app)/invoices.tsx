@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 
 import { api } from "@/lib/api-client";
@@ -23,25 +24,25 @@ function fmtMoney(amount: number, currency: string): string {
   }
 }
 
-function fmtDay(iso: string): string {
-  return new Date(iso).toLocaleDateString("en", { month: "short", day: "numeric" });
-}
-
 export default function Invoices() {
+  const { t, i18n } = useTranslation();
   const currency = useCompanyCurrency();
   const invoices = useQuery({
     queryKey: ["invoices", "me"],
     queryFn: async () => (await api.get<PayrollInvoice[]>("/invoices/me")).data,
   });
 
+  const fmtDay = (iso: string): string =>
+    new Date(iso).toLocaleDateString(i18n.language, { month: "short", day: "numeric" });
+
   return (
     <Screen>
-      <Title>Invoices</Title>
+      <Title>{t("features.invoices.pageTitle")}</Title>
       <QueryBoundary query={invoices}>
         {(rows) => (
           <View className="mt-2">
             {rows.length === 0 && (
-              <EmptyText>No invoices yet — these appear once your company generates one for a pay period.</EmptyText>
+              <EmptyText>{t("features.invoices.empty")}</EmptyText>
             )}
             {[...rows].sort((a, b) => b.period_start.localeCompare(a.period_start)).map((invoice) => (
               <Link key={invoice.id} href={{ pathname: "/(app)/invoices/[id]", params: { id: String(invoice.id) } }} asChild>
@@ -56,7 +57,7 @@ export default function Invoices() {
                           {invoice.total_hours.toFixed(2)}h · {fmtMoney(invoice.total_amount, currency)}
                         </Text>
                       </View>
-                      <Badge label={invoice.actual_working_hours ? "actual" : "scheduled"} tone="neutral" />
+                      <Badge label={invoice.actual_working_hours ? t("features.invoices.actual") : t("features.invoices.scheduled")} tone="neutral" />
                     </Row>
                   </Card>
                 </Pressable>

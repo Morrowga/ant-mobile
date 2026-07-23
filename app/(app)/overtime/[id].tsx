@@ -8,6 +8,7 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 
 import { api } from "@/lib/api-client";
@@ -15,15 +16,16 @@ import type { Overtime } from "@/lib/types";
 import { QueryBoundary } from "@/components/query";
 import { Badge, Card, Row, Screen } from "@/components/ui";
 
-const fmtDateTime = (value: string) =>
-  new Date(value).toLocaleString("en", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
-
 export default function OvertimeDetailScreen() {
+  const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const overtime = useQuery({
     queryKey: ["overtime", id],
     queryFn: async () => (await api.get<Overtime>(`/overtime/${id}`)).data,
   });
+
+  const fmtDateTime = (value: string) =>
+    new Date(value).toLocaleString(i18n.language, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 
   return (
     <Screen>
@@ -33,31 +35,31 @@ export default function OvertimeDetailScreen() {
             <Card>
               <Row className="justify-between">
                 <Text className="font-display text-lg text-ink">{fmtDateTime(ot.start_at)}</Text>
-                {ot.end_at ? <Badge label="closed" /> : <Badge label="in progress" tone="warn" />}
+                {ot.end_at ? <Badge label={t("features.overtimeDetail.closed")} /> : <Badge label={t("features.overtimeDetail.inProgress")} tone="warn" />}
               </Row>
               <Text className="mt-1 font-sansmed text-[13px] text-faint">
-                {ot.end_at ? `Ended ${fmtDateTime(ot.end_at)}` : "Still running"}
+                {ot.end_at ? t("features.overtimeDetail.ended", { time: fmtDateTime(ot.end_at) }) : t("features.overtimeDetail.stillRunning")}
                 {ot.hours !== null ? ` · ${ot.hours}h` : ""}
               </Text>
               <Text className="mt-1 font-sans text-xs capitalize text-faint">
-                Initiated by {ot.initiated_by}
+                {t("features.overtimeDetail.initiatedBy", { who: ot.initiated_by })}
               </Text>
             </Card>
 
             {ot.reason && (
               <Card className="mt-3">
-                <Text className="mb-1 font-sansbold text-[14px] text-ink">Reason</Text>
+                <Text className="mb-1 font-sansbold text-[14px] text-ink">{t("features.overtimeDetail.reason")}</Text>
                 <Text className="font-sans text-[14px] leading-6 text-ink">{ot.reason}</Text>
               </Card>
             )}
 
             <Card className="mt-3">
-              <Text className="mb-1 font-sansbold text-[14px] text-ink">Closing summary</Text>
+              <Text className="mb-1 font-sansbold text-[14px] text-ink">{t("features.overtimeDetail.closingSummary")}</Text>
               {ot.summary ? (
                 <Text className="font-sans text-[14px] leading-6 text-ink">{ot.summary}</Text>
               ) : (
                 <Text className="font-sans text-[13px] text-faint">
-                  {ot.end_at ? "No summary was recorded." : "Not closed yet — a summary is required before this session can end."}
+                  {ot.end_at ? t("features.overtimeDetail.noSummaryRecorded") : t("features.overtimeDetail.notClosedYet")}
                 </Text>
               )}
             </Card>
@@ -68,7 +70,7 @@ export default function OvertimeDetailScreen() {
                 reports. */}
             {ot.ai_summary && (
               <Card className="mt-3">
-                <Text className="mb-1 font-sansbold text-[14px] text-ink">AI summary</Text>
+                <Text className="mb-1 font-sansbold text-[14px] text-ink">{t("features.overtimeDetail.aiSummary")}</Text>
                 <Text className="font-sans text-[13px] leading-5 text-faint">{ot.ai_summary}</Text>
               </Card>
             )}

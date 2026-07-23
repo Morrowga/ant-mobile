@@ -1,0 +1,456 @@
+{
+  "common": {
+    "loading": "Loading…"
+  },
+  "features": {
+    "profile": {
+      "managerRole": "Manager — team views live on the web dashboard",
+      "employeeRole": "Employee",
+      "yourRecords": "Your records",
+      "certificates": "Certificates",
+      "certificatesHint": "Auto-issued monthly and yearly",
+      "kudosReceived": "Kudos received",
+      "kudosHint": "Recognition from your managers",
+      "attendanceHistory": "Attendance history",
+      "attendanceHint": "Your check-in record",
+      "invoices": "Invoices",
+      "invoicesHint": "Generated payroll invoices",
+      "haveASay": "Have a say",
+      "feedback": "Feedback & complaints",
+      "feedbackHint": "Anonymous option available",
+      "settings": "Settings",
+      "deskLocation": "Desk location",
+      "deskLocationHint": "Update where you check in from",
+      "notificationPreferences": "Notification preferences",
+      "notificationPreferencesHint": "Mute what you don't need",
+      "language": "Language",
+      "languageHint": "Switch back to English any time",
+      "changePassword": "Change password",
+      "signOut": "Sign out"
+    },
+    "language": {
+      "title": "Display language",
+      "description": "Your company sets your language, but you can switch back to English any time.",
+      "useEnglish": "Use English",
+      "toggleOffHint": "Turn off to switch back to {{language}}.",
+      "toggleOffHintNoAssigned": "Your company hasn't assigned a language yet — this has no effect.",
+      "error": "Couldn't update your language. Try again."
+    },
+    "certificates": {
+      "description": "Issued automatically at the end of every month and year — a portable record of your work. No approval needed.",
+      "empty": "Your first certificate arrives at the end of this month.",
+      "monthlyCertificate": "Monthly certificate",
+      "yearlyCertificate": "Yearly certificate",
+      "save": "save",
+      "generating": "generating",
+      "saveCertificate": "Save certificate"
+    },
+    "recognitions": {
+      "description": "Kudos your managers have given you. These also feed your impact score.",
+      "empty": "No kudos yet — they'll show up here when they land."
+    },
+    "attendanceHistory": {
+      "empty": "No attendance sessions yet.",
+      "hoursValue": "{{value}}h",
+      "open": "open"
+    },
+    "invoices": {
+      "pageTitle": "Invoices",
+      "empty": "No invoices yet — these appear once your company generates one for a pay period.",
+      "actual": "actual",
+      "scheduled": "scheduled"
+    },
+    "feedback": {
+      "raiseSomething": "Raise something",
+      "harassmentNote": "Harassment reports go directly to the company Owner only — managers never see them.",
+      "messagePlaceholder": "What's going on? Be as specific as you're comfortable with.",
+      "submitAnonymously": "Submit anonymously",
+      "anonymousNote": "Your name is never attached — not even for the Owner.",
+      "sendFeedback": "Send feedback",
+      "yourTickets": "Your tickets",
+      "noneRaised": "Nothing raised yet.",
+      "submittedAnonymously": "submitted anonymously",
+      "categories": {
+        "workload": "workload",
+        "workplace": "workplace",
+        "management": "management",
+        "harassment": "harassment",
+        "other": "other"
+      },
+      "statuses": {
+        "new": "new",
+        "in_review": "in review",
+        "resolved": "resolved",
+        "dismissed": "dismissed",
+        "open": "open"
+      }
+    },
+    "deskLocation": {
+      "title": "Desk location",
+      "subtitle": "Where your check-ins are compared against — changes need your manager's approval.",
+      "updateRequested": "Update requested",
+      "pendingApproval": "pending approval",
+      "submittedWaiting": "Submitted {{time}} — waiting on your manager.",
+      "updateYourLocation": "Update your desk location",
+      "usesCurrentLocation": "Uses your current location. Your manager reviews it before it takes effect.",
+      "requestUpdate": "Request update",
+      "history": "History",
+      "noLocationSet": "No desk location set yet.",
+      "confirmTitle": "Request a desk location update?",
+      "confirmBody": "This uses your current location right now. It won't take effect until your manager approves it.",
+      "cancel": "Cancel",
+      "sendRequest": "Send request",
+      "sendRequest_pending": "Sending…"
+    },
+    "notificationPreferences": {
+      "subtitle": "Attendance, overtime, payroll, leave and alert notifications are always delivered — those keep you paid and covered.",
+      "alwaysOn": "Always on"
+    },
+    "changePassword": {
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "newPasswordPlaceholder": "At least 8 characters",
+      "changePassword": "Change password"
+    },
+    "knowledge": {
+      "pageTitle": "Knowledge & Sharing",
+      "newPost": "New post",
+      "knowledgeDescription": "Company know-how and announcements. Must-reads need your acknowledgment.",
+      "sharingDescription": "Open posts anyone can share — everyone in the company can comment.",
+      "tabs": {
+        "knowledge": "Knowledge",
+        "sharing": "Sharing"
+      },
+      "searchPlaceholder": "Search posts…",
+      "noPostsFound": "No posts found.",
+      "noSharingPostsYet": "No sharing posts yet — start one.",
+      "mustRead": "must read"
+    },
+    "knowledgeNew": {
+      "type": "Type",
+      "sharingHint": "Open to everyone to post — no category, just a post everyone in the company can comment on.",
+      "knowledgeHint": "Company know-how, governed by your Knowledge settings.",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Something worth sharing",
+      "bodyLabel": "Body",
+      "bodyPlaceholder": "Write it the way you'd explain it to a new teammate.",
+      "publish": "Publish"
+    },
+    "knowledgePost": {
+      "comments": "Comments ({{count}})",
+      "noComments": "No comments yet — be the first to reply.",
+      "you": "You",
+      "someone": "Someone",
+      "author": "author",
+      "commentPlaceholder": "Add a comment or suggestion…",
+      "postComment": "Post comment",
+      "acknowledged": "acknowledged ✓",
+      "mustReadNote": "This is a must-read. Confirm once you've read it — your company sees who has.",
+      "iveReadThis": "I've read this"
+    },
+    "health": {
+      "pageTitle": "Your health",
+      "pageDescription": "Only you can see this. Your company only ever sees anonymous team averages — never your entries.",
+      "reminders": "Reminders",
+      "allCaughtUp": "All caught up — nothing waiting right now.",
+      "tapToAnswer": "Tap to answer now",
+      "unanswered": "unanswered",
+      "answered": "answered",
+      "todaysCheckins": "Today's check-ins",
+      "noRemindersSentYet": "No reminders sent yet today — they'll appear here once you check in.",
+      "thisWeek": "This week",
+      "avgWaterPerDay": "Average water / day",
+      "avgMood": "Average mood",
+      "avgSleepPerDay": "Average sleep / day",
+      "mlValue": "{{value}} ml",
+      "moodValue": "{{value}} / 5",
+      "hoursValue": "{{value}} h",
+      "promptTypes": {
+        "sleepCheckin": "Sleep check-in",
+        "moodWaterCheckin": "Mood & water check-in"
+      }
+    },
+    "healthCheckin": {
+        "logged": "Logged!",
+        "sleepQuestion": "How many hours did you sleep last night?",
+        "sleepPrivacyNote": "Only visible to you — never shared with your manager or company.",
+        "requiredToContinue": "Answering this is required to continue.",
+        "thanksLogged": "Thanks — logged!",
+        "quickCheckin": "Quick check-in",
+        "twoQuestionsNote": "Two quick questions — takes a few seconds.",
+        "waterQuestion": "How much water have you had?",
+        "mlValue": "{{value}}ml",
+        "moodQuestion": "How are you feeling right now?",
+        "moodOptions": {
+            "great": "Great",
+            "good": "Good",
+            "okay": "Okay",
+            "low": "Low",
+            "rough": "Rough"
+        },
+        "sleepOptions": {
+            "lessThan5": "Less than 5h",
+            "fiveToSix": "5–6 hours",
+            "sixToSeven": "6–7 hours",
+            "sevenToEight": "7–8 hours",
+            "eightPlus": "8+ hours"
+        },
+        "submit": "Submit"
+    },
+    "today": {
+      "greeting": "Hi",
+      "greetingWithName": "Hi, {{name}}",
+      "minutesShort": "{{count}} min",
+      "hoursMinutesShort": "{{h}}h {{m}}min",
+      "flexibleHoursNote": "Flexible hours — no fixed shift window",
+      "shiftWindow": "Shift: {{start}} – {{end}} ({{tz}})",
+      "minutesLeftInShift": "{{time}} left in your shift",
+      "shiftStartsIn": "Shift starts in {{time}}",
+      "queuedActions": "{{count}} action(s) waiting to sync — they'll send automatically when you're back online.",
+      "onTheClock": "On the clock",
+      "since": "since {{time}}",
+      "lateBadge": "{{minutes}} late",
+      "onTimeBadge": "on time",
+      "trackingActive": "location tracking active",
+      "trackingOff": "location tracking off",
+      "outsideDeskArea": "outside desk area",
+      "checkOut": "Check out",
+      "offTheClock": "Off the clock",
+      "reportAlreadySubmitted": "Today's report is already submitted — see you tomorrow.",
+      "partTimeCheckInNote": "Checking in starts your attendance session. You can check in once per day.",
+      "partTimeCheckInNoteNoTracking": "Checking in starts your attendance session — location is only recorded while you're on it. You can check in once per day.",
+      "shiftEndedNote": "Today's shift has already ended — check-in is no longer available for today.",
+      "tooEarlyNote": "Check-in opens 15 minutes before your shift — {{time}} to go.",
+      "checkInStartsSessionNote": "Checking in starts your attendance session.",
+      "checkInStartsSessionNoteNoTracking": "Checking in starts your attendance session — location is only recorded while you're on it.",
+      "checkIn": "Check in",
+      "onBreak": "On break",
+      "onBreakBadge": "on break",
+      "endBreak": "End break",
+      "breakTime": "Break time",
+      "breakMinutesToday": "{{time}} today",
+      "noBreakYetToday": "none yet today",
+      "startBreak": "Start break",
+      "offlineCheckInQueued": "You're offline — check-in saved and will sync automatically.",
+      "offlineCheckOutQueued": "You're offline — check-out saved and will sync automatically.",
+      "checkedInLate": "You checked in {{minutes}} late.",
+      "checkedOutEarly": "You checked out {{minutes}} early.",
+      "markedWorkingOutside": "Marked as working outside today — no away-from-desk alerts.",
+      "backToDesk": "Back to desk",
+      "workingOutsideToday": "Working outside today",
+      "quickLinks": {
+        "leave": "Leave",
+        "overtime": "Overtime",
+        "history": "History",
+        "kudos": "Kudos"
+      },
+      "thisWeek": "This week",
+      "reportsSubmitted": "Reports submitted",
+      "hoursLogged": "Hours logged",
+      "averagePerDay": "Average per day",
+      "kudosReceived": "Kudos received",
+      "workOutsideModal": {
+        "title": "Are you working outside today?",
+        "body": "Add a quick reason so your manager knows why — this turns off away-from-desk alerts for today.",
+        "reasonPlaceholder": "e.g. Client visit, working from home",
+        "no": "No",
+        "yesConfirm": "Yes, confirm"
+      }
+    },
+    "reports": {
+      "pageTitle": "Your reports",
+      "pageDescription": "What you worked on, day by day. Reports lock at midnight — edits are same-day only.",
+      "tabs": {
+        "daily": "Daily Report",
+        "overtime": "Overtime"
+      },
+      "daily": {
+        "empty": "No reports yet — submit your first from the Home screen.",
+        "editableToday": "editable today",
+        "locked": "locked"
+      },
+      "overtime": {
+        "empty": "No overtime sessions yet.",
+        "closed": "closed",
+        "inProgress": "in progress",
+        "noSummaryYet": "No summary yet"
+      }
+    },
+    "invoiceDetail": {
+      "invoice": "Invoice",
+      "description": "Description",
+      "amount": "Amount",
+      "hoursWorked": "Hours worked",
+      "perHour": "{{amount}} / hour",
+      "total": "Total",
+      "calculatedFrom": "Calculated from {{basis}}",
+      "actualClockedHours": "actual clocked hours",
+      "scheduledMinusLeave": "scheduled hours minus leave",
+      "generated": "Generated {{time}}",
+      "downloadPdf": "Download PDF",
+      "fileNotAvailable": "File not available.",
+      "loadError": "Couldn't load this invoice."
+    },
+    "reportDetail": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "lockedNote": "Locked — reports can only be edited on the day they're written. Your manager can still comment.",
+      "workdayPace": "Workday pace",
+      "paceUnavailable": "Pace analysis isn't available for this report — it appears shortly after submitting, on companies with the Mid plan or above.",
+      "managerComments": "Manager comments",
+      "noComments": "No comments yet.",
+      "saveChanges": "Save changes"
+    },
+    "newReport": {
+      "loading": "Loading…",
+      "minutesShort": "{{count}} min",
+      "hoursMinutesShort": "{{h}}h {{m}}min",
+      "answerHealthFirst": "Answer your health check-in first",
+      "multiplePending": "You have {{count}} unanswered check-ins today.",
+      "singlePendingMobile": "Just one quick question, then you can come straight back here.",
+      "answerNow": "Answer now",
+      "actualWorkedNote": "You've actually worked {{time}} today (breaks excluded). Log your tasks below — the total can be less, but not more.",
+      "fillOutToFinish": "Fill out today's report to finish checking out.",
+      "entryNumberUpper": "ENTRY {{number}}",
+      "project": "Project",
+      "timeSpent": "Time spent",
+      "hoursUnit": "hours",
+      "minutesUnit": "minutes",
+      "whatDidYouWorkOn": "What did you work on?",
+      "summaryPlaceholder": "A few sentences — this is what your manager (and the pace analysis) reads.",
+      "overCeiling": "Total entered ({{entered}}) is more than your actual working hours ({{actual}}). Reduce your entries to fit.",
+      "todayInvoice": "Today invoice",
+      "addAnotherEntry": "Add another entry",
+      "submitAndCheckOut": "Submit & check out",
+      "submitReport": "Submit report",
+      "nothingToReport": "Nothing to report today",
+      "invoiceDialog": {
+        "title": "Today's invoice",
+        "loading": "Loading…",
+        "scheduledShift": "Scheduled shift",
+        "timeCheckedIn": "Time checked in",
+        "breakTimeExcluded": "Break time (excluded)",
+        "lateArrival": "Late arrival",
+        "none": "none",
+        "unansweredPresenceChecks": "Unanswered presence checks",
+        "deductionsOffNote": "No-response deductions are turned off by your company.",
+        "creditedHours": "Credited hours",
+        "close": "Close"
+      }
+    },
+    "overtimeDetail": {
+      "closed": "closed",
+      "inProgress": "in progress",
+      "ended": "Ended {{time}}",
+      "stillRunning": "Still running",
+      "initiatedBy": "Initiated by {{who}}",
+      "reason": "Reason",
+      "closingSummary": "Closing summary",
+      "noSummaryRecorded": "No summary was recorded.",
+      "notClosedYet": "Not closed yet — a summary is required before this session can end.",
+      "aiSummary": "AI summary"
+    },
+    "leave": {
+      "requestLeave": "Request leave",
+      "partialDayQuestion": "Just part of a day?",
+      "partialDayExample": "e.g. 2 hours for a bank errand",
+      "on": "on",
+      "off": "off",
+      "date": "Date",
+      "selectADate": "Select a date",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "selectTime": "Select time",
+      "firstDay": "First day",
+      "lastDay": "Last day",
+      "done": "Done",
+      "sendRequest": "Send request",
+      "yourRequests": "Your requests",
+      "empty": "No leave requests yet.",
+      "types": {
+        "annual": "annual",
+        "sick": "sick",
+        "unpaid": "unpaid",
+        "other": "other"
+      },
+      "statuses": {
+        "pending": "pending",
+        "approved": "approved",
+        "rejected": "rejected"
+      }
+    },
+    "overtime": {
+      "running": "Overtime running",
+      "since": "since {{time}}",
+      "reasonLabel": "Reason: {{reason}}",
+      "closingSummaryLabel": "What did this overtime cover? (required to end the session)",
+      "closingSummaryPlaceholder": "A short closing report — this is mandatory, not optional.",
+      "submitAndEnd": "Submit report & end overtime",
+      "approvedForToday": "Approved for today",
+      "startOvertime": "Start overtime",
+      "noApprovedToday": "No approved overtime today",
+      "submitBelowNoteMobile": "Overtime now needs a request and approval before you can start — submit one below for any day, including today.",
+      "requestOvertime": "Request overtime",
+      "alreadyHaveApproved": "You already have an approved request for today",
+      "alreadyHavePending": "You already have a pending request for today",
+      "tabs": {
+        "requests": "Your requests",
+        "sessions": "Past sessions"
+      },
+      "noRequestsYet": "No overtime requests yet.",
+      "noClosedSessions": "No closed overtime sessions yet.",
+      "date": "Date",
+      "selectADate": "Select a date",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "selectTime": "Select time",
+      "done": "Done",
+      "spansNextDayNoteMobile": "This spans into the next day — ends the day after the selected date.",
+      "whyNeedOvertime": "Why do you need overtime?",
+      "reasonPlaceholder": "e.g. Closing out the Q3 report before tomorrow's deadline",
+      "sendRequest": "Send request",
+      "statuses": {
+        "pending": "pending",
+        "approved": "approved",
+        "rejected": "rejected"
+      }
+    },
+    "notifications": {
+      "preferences": "Preferences",
+      "empty": "All quiet."
+    },
+    "onboardingChecklist": {
+      "title": "Your first steps",
+      "subtitle": "Your company set these up for new joiners. Check items off as you go — this list stays on your profile.",
+      "empty": "No checklist items — you're good to go.",
+      "done": "done",
+      "required": "required",
+      "optional": "optional",
+      "takeMeToApp": "Take me to the app"
+    },
+    "consent": {
+      "title": "Before you start",
+      "subtitle": "Each of these is your choice, recorded individually. You can work without any of them.",
+      "backgroundLocationUnavailable": "Background location isn't available in this preview build — attendance will still work while the app is open. Full background tracking requires the installed app.",
+      "saveChoices": "Save my choices",
+      "items": {
+        "locationTitle": "Location while on the clock",
+        "locationBody": "Your location is recorded ONLY between check-in and check-out, to confirm attendance. While tracking is active your phone shows a persistent notification — that's an operating-system requirement, and it means tracking is never silent. It stops the moment you check out.",
+        "healthTitle": "Personal health tracking",
+        "healthBody": "Water, mood, breaks, steps, and sleep — visible to YOU only. Your manager and company can never see your individual entries; teams only ever see anonymous averages of 3 or more people.",
+        "notificationsTitle": "Notifications",
+        "notificationsBody": "Reminders to check in, submit your daily report, take breaks, and updates from your company."
+      }
+    },
+    "onboardingDeskLocation": {
+      "title": "Pin your desk",
+      "subtitle": "Stand at your usual work spot and pin it once — attendance alerts use this as your home base.",
+      "pinned": "Pinned ✓",
+      "noPinYet": "No pin yet",
+      "repinHere": "Re-pin here",
+      "pinCurrentSpot": "Pin my current spot",
+      "continue": "Continue",
+      "skipForNow": "Skip for now"
+    }
+  }
+}

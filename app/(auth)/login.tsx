@@ -1,6 +1,6 @@
 import { Link, router } from "expo-router";
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform, Text, View } from "react-native";
+import { Image, KeyboardAvoidingView, Platform, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { errorDetail } from "@/lib/api-client";
@@ -29,8 +29,17 @@ export default function Login() {
   return (
     <SafeAreaView className="flex-1 bg-espresso">
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} className="flex-1 justify-center px-6">
-        <Text className="font-displaybold text-4xl text-cream">Ants</Text>
-        <Text className="mb-8 mt-1 font-sans text-sm text-latte">Check in, report your day, stay on track.</Text>
+        <View className="mb-8 items-center">
+          <View className="h-20 w-20 items-center justify-center rounded-full bg-white">
+            <Image
+              source={require("../../assets/images/logo.png")}
+              className="h-15 w-12"
+              resizeMode="contain"
+            />
+          </View>
+          <Text className="mt-3 font-displaybold text-4xl text-cream">ANTS</Text>
+          {/* <Text className="mt-1 font-sans text-sm text-latte">Check in, report your day, stay on track.</Text> */}
+        </View>
         <View className="rounded-2xl bg-paper p-5">
           <Field label="Email" autoCapitalize="none" autoComplete="email" keyboardType="email-address"
             value={email} onChangeText={setEmail} placeholder="you@company.com" />

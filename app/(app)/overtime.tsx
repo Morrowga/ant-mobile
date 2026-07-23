@@ -19,6 +19,7 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tansta
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { router } from "expo-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FlatList, Platform, Pressable, RefreshControl, Text, TextInput, View } from "react-native";
 
 import { api, errorDetail } from "@/lib/api-client";
@@ -31,16 +32,18 @@ const fmtDate = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const fmtTime = (d: Date) =>
   `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-const fmtDateDisplay = (d: Date) => d.toLocaleDateString("en", { weekday: "short", month: "short", day: "numeric" });
-const fmtTimeDisplay = (d: Date) => d.toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" });
 const todayStr = () => fmtDate(new Date());
 const toDateOnly = (value: string) => value.slice(0, 10);
 
 const PAGE_SIZE = 20;
 
 export default function OvertimeScreen() {
+  const { t, i18n } = useTranslation();
   const qc = useQueryClient();
   const [tab, setTab] = useState<"requests" | "sessions">("requests");
+
+  const fmtDateDisplay = (d: Date) => d.toLocaleDateString(i18n.language, { weekday: "short", month: "short", day: "numeric" });
+  const fmtTimeDisplay = (d: Date) => d.toLocaleTimeString(i18n.language, { hour: "2-digit", minute: "2-digit" });
 
   const requests = useQuery({
     queryKey: ["overtime", "requests", "me"],
@@ -106,50 +109,52 @@ export default function OvertimeScreen() {
     <View className="px-5 pt-2">
       {open ? (
         <Card className="bg-espresso">
-          <Text style={{ color: "#ffffff" }} className="font-display text-lg">Overtime running</Text>
+          <Text style={{ color: "#ffffff" }} className="font-display text-lg">{t("features.overtime.running")}</Text>
           <Text className="mt-1 font-sans text-[13px] text-latte">
-            since {new Date(open.start_at).toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" })}
+            {t("features.overtime.since", { time: new Date(open.start_at).toLocaleTimeString(i18n.language, { hour: "2-digit", minute: "2-digit" }) })}
           </Text>
-          {open.reason && <Text className="mt-2 font-sans text-[13px] text-latte">Reason: {open.reason}</Text>}
+          {open.reason && <Text className="mt-2 font-sans text-[13px] text-latte">{t("features.overtime.reasonLabel", { reason: open.reason })}</Text>}
           <Text className="mb-1.5 mt-4 font-sansmed text-[13px] text-latte">
-            What did this overtime cover? (required to end the session)
+            {t("features.overtime.closingSummaryLabel")}
           </Text>
           <TextInput
             multiline value={summary} onChangeText={setSummary} textAlignVertical="top"
-            placeholder="A short closing report — this is mandatory, not optional."
+            placeholder={t("features.overtime.closingSummaryPlaceholder")}
             placeholderTextColor="#b9a794"
             className="min-h-[80px] rounded-xl bg-cream/95 px-4 py-3 font-sans text-ink"
           />
           {error && <ErrorText>{error}</ErrorText>}
-          <Button label="Submit report & end overtime" variant="primary" className="mt-3"
+          <Button label={t("features.overtime.submitAndEnd")} variant="primary" className="mt-3"
             disabled={summary.trim().length < 3} loading={reportThenEnd.isPending}
             onPress={() => reportThenEnd.mutate()} />
         </Card>
       ) : approvedToday ? (
         <Card className="bg-espresso">
-          <Text style={{ color: "#ffffff" }} className="font-display text-lg">Approved for today</Text>
+          <Text style={{ color: "#ffffff" }} className="font-display text-lg">{t("features.overtime.approvedForToday")}</Text>
           <Text className="mt-1 font-sans text-[13px] text-latte">
             {approvedToday.planned_start_time} – {approvedToday.planned_end_time} · {approvedToday.reason}
           </Text>
           {error && <ErrorText>{error}</ErrorText>}
-          <Button label="Start overtime" variant="primary" className="mt-3"
+          <Button label={t("features.overtime.startOvertime")} variant="primary" className="mt-3"
             loading={startSession.isPending} onPress={() => startSession.mutate()} />
         </Card>
       ) : (
         <Card>
-          <Text className="font-display text-lg text-ink">No approved overtime today</Text>
+          <Text className="font-display text-lg text-ink">{t("features.overtime.noApprovedToday")}</Text>
           <Text className="mt-1 font-sans text-[13px] text-faint">
-            Overtime now needs a request and approval before you can start — submit one below for any day, including today.
+            {t("features.overtime.submitBelowNoteMobile")}
           </Text>
         </Card>
       )}
 
       {existingTodayRequest ? (
         <>
-          <SectionTitle>Request overtime</SectionTitle>
+          <SectionTitle>{t("features.overtime.requestOvertime")}</SectionTitle>
           <Card>
             <Text className="font-sansmed text-[14px] text-ink">
-              You already have {existingTodayRequest.status === "approved" ? "an approved" : "a pending"} request for today
+              {existingTodayRequest.status === "approved"
+                ? t("features.overtime.alreadyHaveApproved")
+                : t("features.overtime.alreadyHavePending")}
             </Text>
             <Text className="mt-1 font-sans text-[13px] text-faint">
               {existingTodayRequest.planned_start_time}–{existingTodayRequest.planned_end_time} · {existingTodayRequest.reason}
@@ -163,12 +168,12 @@ export default function OvertimeScreen() {
       <Row className="mt-6 gap-2">
         <Pressable onPress={() => setTab("requests")} className="flex-1">
           <View className={`items-center rounded-xl border py-2.5 ${tab === "requests" ? "border-espresso bg-espresso" : "border-line bg-paper"}`}>
-            <Text className={`font-sansbold text-[13px] ${tab === "requests" ? "text-cream" : "text-ink"}`}>Your requests</Text>
+            <Text className={`font-sansbold text-[13px] ${tab === "requests" ? "text-cream" : "text-ink"}`}>{t("features.overtime.tabs.requests")}</Text>
           </View>
         </Pressable>
         <Pressable onPress={() => setTab("sessions")} className="flex-1">
           <View className={`items-center rounded-xl border py-2.5 ${tab === "sessions" ? "border-espresso bg-espresso" : "border-line bg-paper"}`}>
-            <Text className={`font-sansbold text-[13px] ${tab === "sessions" ? "text-cream" : "text-ink"}`}>Past sessions</Text>
+            <Text className={`font-sansbold text-[13px] ${tab === "sessions" ? "text-cream" : "text-ink"}`}>{t("features.overtime.tabs.sessions")}</Text>
           </View>
         </Pressable>
       </Row>
@@ -187,15 +192,15 @@ export default function OvertimeScreen() {
               ListHeaderComponent={header}
               contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
               refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor="#6c4b36" />}
-              ListEmptyComponent={<EmptyText>No overtime requests yet.</EmptyText>}
+              ListEmptyComponent={<EmptyText>{t("features.overtime.noRequestsYet")}</EmptyText>}
               renderItem={({ item: r }) => (
                 <Card className="mb-2 py-3">
                   <Row className="justify-between">
                     <Text className="font-sansmed text-[14px] text-ink">
-                      {new Date(r.requested_date).toLocaleDateString("en", { month: "short", day: "numeric" })}
+                      {new Date(r.requested_date).toLocaleDateString(i18n.language, { month: "short", day: "numeric" })}
                       {"  "}{r.planned_start_time}–{r.planned_end_time}
                     </Text>
-                    <Badge label={r.status}
+                    <Badge label={t(`features.overtime.statuses.${r.status}`)}
                       tone={r.status === "approved" ? "good" : r.status === "rejected" ? "bad" : "warn"} />
                   </Row>
                   <Text className="mt-1 font-sans text-[13px] text-faint">{r.reason}</Text>
@@ -229,7 +234,7 @@ export default function OvertimeScreen() {
           }
         }}
         ListEmptyComponent={
-          sessionsPages.isLoading ? <Loading /> : <EmptyText>No closed overtime sessions yet.</EmptyText>
+          sessionsPages.isLoading ? <Loading /> : <EmptyText>{t("features.overtime.noClosedSessions")}</EmptyText>
         }
         ListFooterComponent={sessionsPages.isFetchingNextPage ? <Loading /> : null}
         renderItem={({ item: session }) => (
@@ -237,11 +242,11 @@ export default function OvertimeScreen() {
             <Card className="mb-2 py-3">
               <View className="flex-row items-center justify-between">
                 <Text className="font-sansmed text-[14px] text-ink">
-                  {new Date(session.start_at).toLocaleDateString("en", { month: "short", day: "numeric" })}
+                  {new Date(session.start_at).toLocaleDateString(i18n.language, { month: "short", day: "numeric" })}
                 </Text>
                 <Badge label={`${session.hours ?? "?"}h`} tone="copper" />
               </View>
-              {session.reason && <Text className="mt-1 font-sans text-[13px] text-ink">Reason: {session.reason}</Text>}
+              {session.reason && <Text className="mt-1 font-sans text-[13px] text-ink">{t("features.overtime.reasonLabel", { reason: session.reason })}</Text>}
               {session.summary && <Text className="mt-1 font-sans text-[13px] text-faint">{session.summary}</Text>}
             </Card>
           </Pressable>
@@ -252,6 +257,7 @@ export default function OvertimeScreen() {
 }
 
 function NewRequestForm({ onSubmitted }: { onSubmitted: () => void }) {
+  const { t, i18n } = useTranslation();
   const [date, setDate] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndTime] = useState<Date | null>(null);
@@ -259,6 +265,9 @@ function NewRequestForm({ onSubmitted }: { onSubmitted: () => void }) {
   const [openPicker, setOpenPicker] = useState<"date" | "start" | "end" | null>(null);
   const [pickerTemp, setPickerTemp] = useState<Date>(new Date());
   const [error, setError] = useState<string | null>(null);
+
+  const fmtDateDisplay = (d: Date) => d.toLocaleDateString(i18n.language, { weekday: "short", month: "short", day: "numeric" });
+  const fmtTimeDisplay = (d: Date) => d.toLocaleTimeString(i18n.language, { hour: "2-digit", minute: "2-digit" });
 
   const submit = useMutation({
     mutationFn: () =>
@@ -310,18 +319,18 @@ function NewRequestForm({ onSubmitted }: { onSubmitted: () => void }) {
 
   return (
     <>
-      <SectionTitle>Request overtime</SectionTitle>
+      <SectionTitle>{t("features.overtime.requestOvertime")}</SectionTitle>
       <Card>
-        <Text className="mb-1.5 font-sansmed text-[13px] text-ink">Date</Text>
-        <PickerField value={date ? fmtDateDisplay(date) : "Select a date"} onPress={() => openPickerFor("date", date)} />
+        <Text className="mb-1.5 font-sansmed text-[13px] text-ink">{t("features.overtime.date")}</Text>
+        <PickerField value={date ? fmtDateDisplay(date) : t("features.overtime.selectADate")} onPress={() => openPickerFor("date", date)} />
         <Row className="mt-3 gap-3">
           <View className="flex-1">
-            <Text className="mb-1.5 font-sansmed text-[13px] text-ink">Start time</Text>
-            <PickerField value={startTime ? fmtTimeDisplay(startTime) : "Select time"} onPress={() => openPickerFor("start", startTime)} />
+            <Text className="mb-1.5 font-sansmed text-[13px] text-ink">{t("features.overtime.startTime")}</Text>
+            <PickerField value={startTime ? fmtTimeDisplay(startTime) : t("features.overtime.selectTime")} onPress={() => openPickerFor("start", startTime)} />
           </View>
           <View className="flex-1">
-            <Text className="mb-1.5 font-sansmed text-[13px] text-ink">End time</Text>
-            <PickerField value={endTime ? fmtTimeDisplay(endTime) : "Select time"} onPress={() => openPickerFor("end", endTime)} />
+            <Text className="mb-1.5 font-sansmed text-[13px] text-ink">{t("features.overtime.endTime")}</Text>
+            <PickerField value={endTime ? fmtTimeDisplay(endTime) : t("features.overtime.selectTime")} onPress={() => openPickerFor("end", endTime)} />
           </View>
         </Row>
 
@@ -335,23 +344,23 @@ function NewRequestForm({ onSubmitted }: { onSubmitted: () => void }) {
           />
         )}
         {Platform.OS === "ios" && openPicker && (
-          <Button label="Done" variant="outline" className="mt-2" onPress={handleDone} />
+          <Button label={t("features.overtime.done")} variant="outline" className="mt-2" onPress={handleDone} />
         )}
         {spansNextDay && (
           <Text className="mt-2 font-sans text-xs text-faint">
-            This spans into the next day — ends the day after the selected date.
+            {t("features.overtime.spansNextDayNoteMobile")}
           </Text>
         )}
 
-        <Text className="mb-1.5 mt-3 font-sansmed text-[13px] text-ink">Why do you need overtime?</Text>
+        <Text className="mb-1.5 mt-3 font-sansmed text-[13px] text-ink">{t("features.overtime.whyNeedOvertime")}</Text>
         <TextInput
           multiline value={reason} onChangeText={setReason} textAlignVertical="top"
-          placeholder="e.g. Closing out the Q3 report before tomorrow's deadline"
+          placeholder={t("features.overtime.reasonPlaceholder")}
           placeholderTextColor="#8a8580"
           className="min-h-[70px] rounded-xl border border-line bg-cream px-4 py-3 font-sans text-ink"
         />
         {error && <ErrorText>{error}</ErrorText>}
-        <Button label="Send request" variant="dark" className="mt-3"
+        <Button label={t("features.overtime.sendRequest")} variant="dark" className="mt-3"
           disabled={!canSubmit} loading={submit.isPending} onPress={() => submit.mutate()} />
       </Card>
     </>

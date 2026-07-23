@@ -29,7 +29,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, router, useFocusEffect } from "expo-router";
 import { Bell } from "lucide-react-native";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Modal, Pressable, Text, TextInput, View } from "react-native";
+import { useTranslation } from "react-i18next";
+import { Image, Modal, Pressable, Text, TextInput, View } from "react-native";
 
 import { api, errorDetail } from "@/lib/api-client";
 import { useAuth } from "@/lib/auth";
@@ -55,11 +56,11 @@ interface ShiftStatus {
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-function fmtMinutes(mins: number) {
-  if (mins < 60) return `${mins} min`;
+function fmtMinutes(mins: number, t: (key: string, opts?: Record<string, unknown>) => string) {
+  if (mins < 60) return t("features.today.minutesShort", { count: mins });
   const h = Math.floor(mins / 60);
   const m = mins % 60;
-  return `${h}h ${m}min`;
+  return t("features.today.hoursMinutesShort", { h, m });
 }
 
 /** "Asia/Ho_Chi_Minh" -> "Ho Chi Minh". Takes just the city part after the
@@ -71,6 +72,7 @@ function fmtTimezone(tz: string): string {
 }
 
 export default function Today() {
+  const { t, i18n } = useTranslation();
   const { me } = useAuth();
   const qc = useQueryClient();
   const status = useQuery({
@@ -178,7 +180,7 @@ export default function Today() {
         () => api.post("/attendance/check-in", body),
       );
       if (queued) {
-        setNotice("You're offline — check-in saved and will sync automatically.");
+        setNotice(t("features.today.offlineCheckInQueued"));
       } else {
         const started = await startTracking();
         setTracking(started);
@@ -190,7 +192,7 @@ export default function Today() {
 
       const lateMinutes = response?.data?.late_minutes;
       if (typeof lateMinutes === "number" && lateMinutes > 0) {
-        setNotice(`You checked in ${fmtMinutes(lateMinutes)} late.`);
+        setNotice(t("features.today.checkedInLate", { minutes: fmtMinutes(lateMinutes, t) }));
       }
       if (queued) return;
 
@@ -218,14 +220,14 @@ export default function Today() {
         { kind: "check-out", path: "/attendance/check-out", body: {} },
         () => api.post("/attendance/check-out"),
       );
-      if (queued) setNotice("You're offline — check-out saved and will sync automatically.");
+      if (queued) setNotice(t("features.today.offlineCheckOutQueued"));
       return result;
     },
     onSuccess: (response) => {
       qc.invalidateQueries({ queryKey: ["attendance"] });
       const earlyMinutes = response?.data?.early_checkout_minutes;
       if (typeof earlyMinutes === "number" && earlyMinutes > 0) {
-        setNotice(`You checked out ${fmtMinutes(earlyMinutes)} early.`);
+        setNotice(t("features.today.checkedOutEarly", { minutes: fmtMinutes(earlyMinutes, t) }));
       }
     },
     onError: (e) => {
@@ -242,7 +244,7 @@ export default function Today() {
   const workOutside = useMutation({
     mutationFn: (reason: string) => api.post("/attendance/work-outside", { reason }),
     onSuccess: async () => {
-      setNotice("Marked as working outside today — no away-from-desk alerts.");
+      setNotice(t("features.today.markedWorkingOutside"));
       setWorkOutsidePromptOpen(false);
       await stopTracking();
       setTracking(false);
@@ -279,41 +281,59 @@ export default function Today() {
 
   return (
     <Screen refreshing={isRefreshing} onRefresh={handleRefresh}>
-      <Row className="items-start justify-between">
-        <View>
-          <Title>Hi{me?.full_name ? `, ${me.full_name.split(" ")[0]}` : ""}</Title>
-          <Subtitle>{new Date().toLocaleDateString("en", { weekday: "long", month: "long", day: "numeric" })}</Subtitle>
+      <View>
+        {/* Top row: logo + notification bell */}
+        <Row className="items-center justify-between">
+          <Row className="items-center gap-1.5">
+            <Image
+              source={require("../../../assets/images/logo.png")}
+              className="h-10 w-10"
+              resizeMode="contain"
+            />
+            <Text className="font-display text-base font-bold text-espresso">ANTS</Text>
+          </Row>
+         
+          <Pressable onPress={() => router.push("/(app)/notifications")} className="relative p-1">
+            <Bell size={24} color="#3d2c1f" />
+            {unreadCount > 0 && (
+              <View className="absolute right-0.5 top-0.5 h-2.5 w-2.5 rounded-full border border-cream bg-red-500" />
+            )}
+          </Pressable>
+        </Row>
+
+        {/* Greeting below */}
+        <View className="mt-2">
+          <Title>
+            {me?.full_name ? t("features.today.greetingWithName", { name: me.full_name.split(" ")[0] }) : t("features.today.greeting")}
+          </Title>
+          <Subtitle>
+            {new Date().toLocaleDateString(i18n.language, { weekday: "long", month: "long", day: "numeric" })}
+          </Subtitle>
         </View>
-        <Pressable onPress={() => router.push("/(app)/notifications")} className="relative p-1">
-          <Bell size={24} color="#3d2c1f" />
-          {unreadCount > 0 && (
-            <View className="absolute right-0.5 top-0.5 h-2.5 w-2.5 rounded-full border border-cream bg-red-500" />
-          )}
-        </Pressable>
-      </Row>
+      </View>
 
       <Card className="mt-4 items-center py-6">
         <Text className="font-display text-[40px] text-espresso tabular-nums">
-          {now.toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+          {now.toLocaleTimeString(i18n.language, { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
         </Text>
         <QueryBoundary query={shift}>
           {(s) => s.job_type === "part_time" ? (
-            <Text className="mt-2 font-sans text-xs text-faint">Flexible hours — no fixed shift window</Text>
+            <Text className="mt-2 font-sans text-xs text-faint">{t("features.today.flexibleHoursNote")}</Text>
           ) : (
             <View className="mt-2 items-center">
               <Text className="font-sans text-xs text-faint">
-                Shift: {s.shift_start_local} – {s.shift_end_local} ({fmtTimezone(s.employee_timezone)})
+                {t("features.today.shiftWindow", { start: s.shift_start_local, end: s.shift_end_local, tz: fmtTimezone(s.employee_timezone) })}
               </Text>
               {status.data?.checked_in ? (
                 s.minutes_until_end !== null && s.minutes_until_end > 0 && (
                   <Text className="mt-1 font-sansmed text-[13px] text-ink">
-                    {fmtMinutes(s.minutes_until_end)} left in your shift
+                    {t("features.today.minutesLeftInShift", { time: fmtMinutes(s.minutes_until_end, t) })}
                   </Text>
                 )
               ) : (
                 s.minutes_until_start !== null && s.minutes_until_start > 0 && (
                   <Text className="mt-1 font-sansmed text-[13px] text-ink">
-                    Shift starts in {fmtMinutes(s.minutes_until_start)}
+                    {t("features.today.shiftStartsIn", { time: fmtMinutes(s.minutes_until_start, t) })}
                   </Text>
                 )
               )}
@@ -325,7 +345,7 @@ export default function Today() {
       {queue.length > 0 && (
         <Card className="mt-4 bg-latte/40">
           <Text className="font-sansmed text-[13px] text-espresso">
-            {queue.length} action{queue.length > 1 ? "s" : ""} waiting to sync — they'll send automatically when you're back online.
+            {t("features.today.queuedActions", { count: queue.length })}
           </Text>
         </Card>
       )}
@@ -337,40 +357,40 @@ export default function Today() {
               {data.checked_in ? (
                 <>
                   <Row className="justify-between">
-                    <Text className="font-display text-xl text-espresso">On the clock</Text>
+                    <Text className="font-display text-xl text-espresso">{t("features.today.onTheClock")}</Text>
                     <OnDutyDot />
                   </Row>
                   <Text className="mt-1 font-sans text-[13px] text-faint">
-                    since {data.check_in_at ? new Date(data.check_in_at).toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" }) : "…"}
+                    {t("features.today.since", { time: data.check_in_at ? new Date(data.check_in_at).toLocaleTimeString(i18n.language, { hour: "2-digit", minute: "2-digit" }) : "…" })}
                   </Text>
                   <Row className="mt-3 flex-wrap gap-2">
                     {!isPartTime && shift.data?.is_late ? (
-                      <Badge label={`${fmtMinutes(shift.data.minutes_late ?? 0)} late`} tone="bad" />
+                      <Badge label={t("features.today.lateBadge", { minutes: fmtMinutes(shift.data.minutes_late ?? 0, t) })} tone="bad" />
                     ) : !isPartTime && shift.data?.is_late === false ? (
-                      <Badge label="on time" tone="good" />
+                      <Badge label={t("features.today.onTimeBadge")} tone="good" />
                     ) : null}
-                    <Badge label={tracking ? "location tracking active" : "location tracking off"}
+                    <Badge label={tracking ? t("features.today.trackingActive") : t("features.today.trackingOff")}
                       tone={tracking ? "warn" : "neutral"} />
-                    {data.checked_in_outside_desk && <Badge label="outside desk area" tone="warn" />}
+                    {data.checked_in_outside_desk && <Badge label={t("features.today.outsideDeskArea")} tone="warn" />}
                   </Row>
-                  <Button label="Check out" variant="primary" className="mt-4"
+                  <Button label={t("features.today.checkOut")} variant="primary" className="mt-4"
                     loading={checkOut.isPending} onPress={() => checkOut.mutate()} />
                 </>
               ) : (
                 <>
-                  <Text className="font-display text-xl text-ink">Off the clock</Text>
+                  <Text className="font-display text-xl text-ink">{t("features.today.offTheClock")}</Text>
                   <Text className="mt-1 font-sans text-[13px] text-faint">
                     {data.report_submitted_today
-                      ? "Today's report is already submitted — see you tomorrow."
+                      ? t("features.today.reportAlreadySubmitted")
                       : isPartTime
-                      ? `Checking in starts your attendance session${tracking ? "" : " — location is only recorded while you're on it"}. You can check in once per day.`
+                      ? (tracking ? t("features.today.partTimeCheckInNote") : t("features.today.partTimeCheckInNoteNoTracking"))
                       : shiftEnded
-                      ? "Today's shift has already ended — check-in is no longer available for today."
+                      ? t("features.today.shiftEndedNote")
                       : tooEarlyToCheckIn
-                      ? `Check-in opens 15 minutes before your shift — ${fmtMinutes((shift.data?.minutes_until_start ?? 0) - 15)} to go.`
-                      : `Checking in starts your attendance session${tracking ? "" : " — location is only recorded while you're on it"}.`}
+                      ? t("features.today.tooEarlyNote", { time: fmtMinutes((shift.data?.minutes_until_start ?? 0) - 15, t) })
+                      : (tracking ? t("features.today.checkInStartsSessionNote") : t("features.today.checkInStartsSessionNoteNoTracking"))}
                   </Text>
-                  <Button label="Check in" variant="dark" className="mt-4"
+                  <Button label={t("features.today.checkIn")} variant="dark" className="mt-4"
                     disabled={data.report_submitted_today || tooEarlyToCheckIn || shiftEnded}
                     loading={checkIn.isPending} onPress={() => checkIn.mutate()} />
                 </>
@@ -382,24 +402,24 @@ export default function Today() {
                 {data.on_break ? (
                   <>
                     <Row className="justify-between">
-                      <Text className="font-display text-lg text-ink">On break</Text>
-                      <Badge label="on break" tone="warn" />
+                      <Text className="font-display text-lg text-ink">{t("features.today.onBreak")}</Text>
+                      <Badge label={t("features.today.onBreakBadge")} tone="warn" />
                     </Row>
                     <Text className="mt-1 font-display text-2xl text-ink tabular-nums">
                       {data.break_started_at ? fmtElapsed(now, new Date(data.break_started_at)) : "00:00"}
                     </Text>
-                    <Button label="End break" variant="dark" className="mt-3"
+                    <Button label={t("features.today.endBreak")} variant="dark" className="mt-3"
                       loading={endBreak.isPending} onPress={() => endBreak.mutate()} />
                   </>
                 ) : (
                   <>
                     <Row className="justify-between">
-                      <Text className="font-sansmed text-[14px] text-ink">Break time</Text>
+                      <Text className="font-sansmed text-[14px] text-ink">{t("features.today.breakTime")}</Text>
                       <Text className="font-sans text-[13px] text-faint">
-                        {data.total_break_minutes_today > 0 ? `${fmtMinutes(data.total_break_minutes_today)} today` : "none yet today"}
+                        {data.total_break_minutes_today > 0 ? t("features.today.breakMinutesToday", { time: fmtMinutes(data.total_break_minutes_today, t) }) : t("features.today.noBreakYetToday")}
                       </Text>
                     </Row>
-                    <Button label="Start break" variant="outline" className="mt-3"
+                    <Button label={t("features.today.startBreak")} variant="outline" className="mt-3"
                       loading={startBreak.isPending} onPress={() => startBreak.mutate()} />
                   </>
                 )}
@@ -421,19 +441,19 @@ export default function Today() {
 
       <Row className="mt-4">
         {status.data?.working_outside_today ? (
-          <Button label="Back to desk" variant="dark" className="flex-1"
+          <Button label={t("features.today.backToDesk")} variant="dark" className="flex-1"
             loading={cancelWorkOutside.isPending} onPress={() => cancelWorkOutside.mutate()} />
         ) : status.data?.checked_in && status.data?.work_outside_available !== false && !status.data?.report_submitted_today ? (
-          <Button label="Working outside today" variant="outline" className="flex-1"
+          <Button label={t("features.today.workingOutsideToday")} variant="outline" className="flex-1"
             onPress={() => setWorkOutsidePromptOpen(true)} />
         ) : null}
       </Row>
 
       <View className="mt-6 flex-row flex-wrap gap-2">
-        <QuickLink href="/(app)/leave" label="Leave" />
-        <QuickLink href="/(app)/overtime" label="Overtime" />
-        <QuickLink href="/(app)/attendance-history" label="History" />
-        <QuickLink href="/(app)/recognitions" label="Kudos" />
+        <QuickLink href="/(app)/leave" label={t("features.today.quickLinks.leave")} />
+        <QuickLink href="/(app)/overtime" label={t("features.today.quickLinks.overtime")} />
+        <QuickLink href="/(app)/attendance-history" label={t("features.today.quickLinks.history")} />
+        <QuickLink href="/(app)/recognitions" label={t("features.today.quickLinks.kudos")} />
       </View>
 
       {/* Moved here from the Reports screen -- this is where "how's my
@@ -472,6 +492,7 @@ export default function Today() {
 /** Moved from Reports.tsx verbatim -- same client-side computation from
  * already-fetched data, no new backend endpoint needed. */
 function WeekSummary({ reports, kudosCount }: { reports: Report[]; kudosCount: number }) {
+  const { t } = useTranslation();
   const stats = useMemo(() => {
     const weekAgo = Date.now() - 7 * DAY_MS;
     const thisWeek = reports.filter((r) => new Date(r.report_date).getTime() >= weekAgo);
@@ -485,12 +506,12 @@ function WeekSummary({ reports, kudosCount }: { reports: Report[]; kudosCount: n
 
   return (
     <>
-      <SectionTitle>This week</SectionTitle>
+      <SectionTitle>{t("features.today.thisWeek")}</SectionTitle>
       <View className="gap-2">
-        <Stat label="Reports submitted" value={String(stats.reportsThisWeek)} />
-        <Stat label="Hours logged" value={`${stats.hoursThisWeek}h`} />
-        <Stat label="Average per day" value={`${stats.avgHoursPerDay}h`} />
-        <Stat label="Kudos received" value={String(kudosCount)} />
+        <Stat label={t("features.today.reportsSubmitted")} value={String(stats.reportsThisWeek)} />
+        <Stat label={t("features.today.hoursLogged")} value={`${stats.hoursThisWeek}h`} />
+        <Stat label={t("features.today.averagePerDay")} value={`${stats.avgHoursPerDay}h`} />
+        <Stat label={t("features.today.kudosReceived")} value={String(kudosCount)} />
       </View>
     </>
   );
@@ -531,25 +552,26 @@ function OnDutyDot() {
 function WorkOutsideModal({ open, onClose, onConfirm, loading, error }: {
   open: boolean; onClose: () => void; onConfirm: (reason: string) => void; loading: boolean; error: string | null;
 }) {
+  const { t } = useTranslation();
   const [reason, setReason] = useState("");
 
   return (
     <Modal visible={open} animationType="fade" transparent onRequestClose={onClose}>
       <View className="flex-1 items-center justify-center bg-ink/40 px-6">
         <View className="w-full rounded-2xl bg-paper p-5">
-          <Text className="font-display text-lg text-ink">Are you working outside today?</Text>
+          <Text className="font-display text-lg text-ink">{t("features.today.workOutsideModal.title")}</Text>
           <Text className="mt-1 font-sans text-[13px] text-faint">
-            Add a quick reason so your manager knows why — this turns off away-from-desk alerts for today.
+            {t("features.today.workOutsideModal.body")}
           </Text>
           <TextInput
-            value={reason} onChangeText={setReason} placeholder="e.g. Client visit, working from home"
+            value={reason} onChangeText={setReason} placeholder={t("features.today.workOutsideModal.reasonPlaceholder")}
             placeholderTextColor="#8a8580" multiline
             className="mt-3 h-20 rounded-xl border border-line bg-cream px-4 py-3 font-sans text-ink"
           />
           {error && <ErrorText>{error}</ErrorText>}
           <Row className="mt-4 gap-2">
-            <Button label="No" variant="outline" className="flex-1" onPress={onClose} />
-            <Button label="Yes, confirm" variant="dark" className="flex-1"
+            <Button label={t("features.today.workOutsideModal.no")} variant="outline" className="flex-1" onPress={onClose} />
+            <Button label={t("features.today.workOutsideModal.yesConfirm")} variant="dark" className="flex-1"
               disabled={!reason.trim()} loading={loading} onPress={() => onConfirm(reason.trim())} />
           </Row>
         </View>

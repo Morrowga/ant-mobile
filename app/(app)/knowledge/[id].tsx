@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Linking, Text, TextInput, View } from "react-native";
 
 import { api, errorDetail } from "@/lib/api-client";
@@ -47,6 +48,7 @@ function Linkified({ text, className }: { text: string; className?: string }) {
 }
 
 export default function KnowledgeDetail() {
+  const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { me } = useAuth();
   const qc = useQueryClient();
@@ -82,7 +84,7 @@ export default function KnowledgeDetail() {
             <>
               <Card>
                 <Row className="items-center gap-2">
-                  <Badge label={isSharing ? "sharing" : "knowledge"} tone={isSharing ? "neutral" : "warn"} />
+                  <Badge label={isSharing ? t("features.knowledge.tabs.sharing") : t("features.knowledge.tabs.knowledge")} tone={isSharing ? "neutral" : "warn"} />
                   {data.category && !isSharing && <Badge label={data.category.replace("_", " ")} />}
                 </Row>
                 <Text className="mt-2 font-display text-xl text-ink">{data.title}</Text>
@@ -96,10 +98,10 @@ export default function KnowledgeDetail() {
               {isSharing && (
                 <Card className="mt-3">
                   <Text className="mb-2 font-sansbold text-[14px] text-ink">
-                    Comments ({data.comments.length})
+                    {t("features.knowledgePost.comments", { count: data.comments.length })}
                   </Text>
                   {data.comments.length === 0 && (
-                    <Text className="mb-2 font-sans text-[13px] text-faint">No comments yet — be the first to reply.</Text>
+                    <Text className="mb-2 font-sans text-[13px] text-faint">{t("features.knowledgePost.noComments")}</Text>
                   )}
                   {data.comments.map((c) => {
                     const isPostAuthor = c.author_id === data.author_id;
@@ -114,9 +116,9 @@ export default function KnowledgeDetail() {
                         <Linkified text={c.comment} className="font-sans text-[13px] text-ink" />
                         <Row className="mt-1 items-center gap-1">
                           <Text className="font-sans text-[11px] text-faint">
-                            {isMine ? "You" : c.author_name ?? "Someone"} · {new Date(c.created_at).toLocaleDateString("en", { month: "short", day: "numeric" })}
+                            {isMine ? t("features.knowledgePost.you") : c.author_name ?? t("features.knowledgePost.someone")} · {new Date(c.created_at).toLocaleDateString(i18n.language, { month: "short", day: "numeric" })}
                           </Text>
-                          {isPostAuthor && <Badge label="author" tone="neutral" />}
+                          {isPostAuthor && <Badge label={t("features.knowledgePost.author")} tone="neutral" />}
                         </Row>
                       </View>
                     );
@@ -124,14 +126,14 @@ export default function KnowledgeDetail() {
                   <TextInput
                     value={commentText}
                     onChangeText={setCommentText}
-                    placeholder="Add a comment or suggestion…"
+                    placeholder={t("features.knowledgePost.commentPlaceholder")}
                     placeholderTextColor="#8a8580"
                     multiline
                     className="mt-2 h-20 rounded-xl border border-line bg-cream px-4 py-3 font-sans text-ink"
                   />
                   {error && <ErrorText>{error}</ErrorText>}
                   <Button
-                    label="Post comment"
+                    label={t("features.knowledgePost.postComment")}
                     variant="dark"
                     className="mt-2"
                     disabled={!commentText.trim()}
@@ -144,14 +146,14 @@ export default function KnowledgeDetail() {
               {data.must_acknowledge && (
                 <Card className="mt-3">
                   {acked || data.acknowledged_by_me ? (
-                    <Badge label="acknowledged ✓" tone="good" />
+                    <Badge label={t("features.knowledgePost.acknowledged")} tone="good" />
                   ) : (
                     <>
                       <Text className="mb-2 font-sans text-[13px] text-faint">
-                        This is a must-read. Confirm once you've read it — your company sees who has.
+                        {t("features.knowledgePost.mustReadNote")}
                       </Text>
                       {error && <ErrorText>{error}</ErrorText>}
-                      <Button label="I've read this" variant="dark" loading={acknowledge.isPending}
+                      <Button label={t("features.knowledgePost.iveReadThis")} variant="dark" loading={acknowledge.isPending}
                         onPress={() => acknowledge.mutate()} />
                     </>
                   )}

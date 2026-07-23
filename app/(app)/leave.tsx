@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Platform, Pressable, Text, View } from "react-native";
 
 import { api, errorDetail } from "@/lib/api-client";
@@ -8,18 +9,19 @@ import type { LeaveRequest } from "@/lib/types";
 import { QueryBoundary } from "@/components/query";
 import { Badge, Button, Card, EmptyText, ErrorText, Row, Screen, SectionTitle } from "@/components/ui";
 
+// NOTE: values stay untranslated here (used as API values); only the BADGE
+// LABEL shown to the user is translated, via features.leave.types.*
 const TYPES = ["annual", "sick", "unpaid", "other"];
 
 const fmtDate = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const fmtTime = (d: Date) =>
   `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-const fmtDateDisplay = (d: Date) => d.toLocaleDateString("en", { weekday: "short", month: "short", day: "numeric" });
-const fmtTimeDisplay = (d: Date) => d.toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" });
 
 type PickerKind = "start" | "end" | "startTime" | "endTime" | null;
 
 export default function Leave() {
+  const { t, i18n } = useTranslation();
   const qc = useQueryClient();
   const history = useQuery({
     queryKey: ["leave", "me"],
@@ -32,6 +34,9 @@ export default function Leave() {
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndTime] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const fmtDateDisplay = (d: Date) => d.toLocaleDateString(i18n.language, { weekday: "short", month: "short", day: "numeric" });
+  const fmtTimeDisplay = (d: Date) => d.toLocaleTimeString(i18n.language, { hour: "2-digit", minute: "2-digit" });
 
   const [openPicker, setOpenPicker] = useState<PickerKind>(null);
   // The picker's currently-displayed value while open. Initialized to the
@@ -93,12 +98,12 @@ export default function Leave() {
 
   return (
     <Screen>
-      <SectionTitle>Request leave</SectionTitle>
+      <SectionTitle>{t("features.leave.requestLeave")}</SectionTitle>
       <Card>
         <Row className="mb-3 flex-wrap gap-2">
-          {TYPES.map((t) => (
-            <Pressable key={t} onPress={() => setType(t)}>
-              <Badge label={t} tone={type === t ? "copper" : "neutral"} />
+          {TYPES.map((typeValue) => (
+            <Pressable key={typeValue} onPress={() => setType(typeValue)}>
+              <Badge label={t(`features.leave.types.${typeValue}`)} tone={type === typeValue ? "copper" : "neutral"} />
             </Pressable>
           ))}
         </Row>
@@ -108,31 +113,31 @@ export default function Leave() {
           className="mb-3 flex-row items-center justify-between rounded-xl border border-line bg-cream px-4 py-3"
         >
           <View>
-            <Text className="font-sansmed text-[13px] text-ink">Just part of a day?</Text>
-            <Text className="mt-0.5 font-sans text-xs text-faint">e.g. 2 hours for a bank errand</Text>
+            <Text className="font-sansmed text-[13px] text-ink">{t("features.leave.partialDayQuestion")}</Text>
+            <Text className="mt-0.5 font-sans text-xs text-faint">{t("features.leave.partialDayExample")}</Text>
           </View>
-          <Badge label={partialDay ? "on" : "off"} tone={partialDay ? "copper" : "neutral"} />
+          <Badge label={partialDay ? t("features.leave.on") : t("features.leave.off")} tone={partialDay ? "copper" : "neutral"} />
         </Pressable>
 
         {partialDay ? (
           <>
-            <Text className="mb-1.5 font-sansmed text-[13px] text-ink">Date</Text>
+            <Text className="mb-1.5 font-sansmed text-[13px] text-ink">{t("features.leave.date")}</Text>
             <PickerField
-              value={start ? fmtDateDisplay(start) : "Select a date"}
+              value={start ? fmtDateDisplay(start) : t("features.leave.selectADate")}
               onPress={() => openPickerFor("start", start)}
             />
             <Row className="mt-3 gap-3">
               <View className="flex-1">
-                <Text className="mb-1.5 font-sansmed text-[13px] text-ink">Start time</Text>
+                <Text className="mb-1.5 font-sansmed text-[13px] text-ink">{t("features.leave.startTime")}</Text>
                 <PickerField
-                  value={startTime ? fmtTimeDisplay(startTime) : "Select time"}
+                  value={startTime ? fmtTimeDisplay(startTime) : t("features.leave.selectTime")}
                   onPress={() => openPickerFor("startTime", startTime)}
                 />
               </View>
               <View className="flex-1">
-                <Text className="mb-1.5 font-sansmed text-[13px] text-ink">End time</Text>
+                <Text className="mb-1.5 font-sansmed text-[13px] text-ink">{t("features.leave.endTime")}</Text>
                 <PickerField
-                  value={endTime ? fmtTimeDisplay(endTime) : "Select time"}
+                  value={endTime ? fmtTimeDisplay(endTime) : t("features.leave.selectTime")}
                   onPress={() => openPickerFor("endTime", endTime)}
                 />
               </View>
@@ -140,10 +145,10 @@ export default function Leave() {
           </>
         ) : (
           <>
-            <Text className="mb-1.5 font-sansmed text-[13px] text-ink">First day</Text>
-            <PickerField value={start ? fmtDateDisplay(start) : "Select a date"} onPress={() => openPickerFor("start", start)} />
-            <Text className="mb-1.5 mt-3 font-sansmed text-[13px] text-ink">Last day</Text>
-            <PickerField value={end ? fmtDateDisplay(end) : "Select a date"} onPress={() => openPickerFor("end", end)} />
+            <Text className="mb-1.5 font-sansmed text-[13px] text-ink">{t("features.leave.firstDay")}</Text>
+            <PickerField value={start ? fmtDateDisplay(start) : t("features.leave.selectADate")} onPress={() => openPickerFor("start", start)} />
+            <Text className="mb-1.5 mt-3 font-sansmed text-[13px] text-ink">{t("features.leave.lastDay")}</Text>
+            <PickerField value={end ? fmtDateDisplay(end) : t("features.leave.selectADate")} onPress={() => openPickerFor("end", end)} />
           </>
         )}
 
@@ -156,30 +161,30 @@ export default function Leave() {
           />
         )}
         {Platform.OS === "ios" && openPicker && (
-          <Button label="Done" variant="outline" className="mt-2" onPress={handleDone} />
+          <Button label={t("features.leave.done")} variant="outline" className="mt-2" onPress={handleDone} />
         )}
 
         {error && <ErrorText>{error}</ErrorText>}
-        <Button label="Send request" variant="dark" className="mt-3"
+        <Button label={t("features.leave.sendRequest")} variant="dark" className="mt-3"
           disabled={!canSubmit} loading={request.isPending}
           onPress={() => request.mutate()} />
       </Card>
 
-      <SectionTitle>Your requests</SectionTitle>
+      <SectionTitle>{t("features.leave.yourRequests")}</SectionTitle>
       <QueryBoundary query={history}>
         {(rows) => (
           <View>
-            {rows.length === 0 && <EmptyText>No leave requests yet.</EmptyText>}
+            {rows.length === 0 && <EmptyText>{t("features.leave.empty")}</EmptyText>}
             {rows.map((leave) => (
               <Card key={leave.id} className="mb-2 flex-row items-center justify-between py-3">
                 <View>
-                  <Text className="font-sansmed text-[14px] capitalize text-ink">{leave.type}</Text>
+                  <Text className="font-sansmed text-[14px] capitalize text-ink">{t(`features.leave.types.${leave.type}`, leave.type)}</Text>
                   <Text className="font-sans text-xs text-faint">
                     {leave.start_date}{leave.start_date !== leave.end_date ? ` → ${leave.end_date}` : ""}
                     {leave.start_time && leave.end_time ? `  ·  ${leave.start_time}–${leave.end_time}` : ""}
                   </Text>
                 </View>
-                <Badge label={leave.status}
+                <Badge label={t(`features.leave.statuses.${leave.status}`)}
                   tone={leave.status === "approved" ? "good" : leave.status === "rejected" ? "bad" : "warn"} />
               </Card>
             ))}

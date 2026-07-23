@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { Text, View } from "react-native";
+import { Image, KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { errorDetail } from "@/lib/api-client";
@@ -31,20 +31,38 @@ export default function AcceptInvite() {
 
   return (
     <SafeAreaView className="flex-1 bg-espresso">
-      <View className="flex-1 justify-center px-6">
-        <Text className="mb-6 font-displaybold text-3xl text-cream">Join your company</Text>
-        <View className="rounded-2xl bg-paper p-5">
-          <Field label="Invite code" autoCapitalize="none" value={token} onChangeText={setToken}
-            placeholder="Paste the code from your invite email" />
-          <Field label="Your name" value={fullName} onChangeText={setFullName} placeholder="First Last" />
-          <Field label="Choose a password" secureTextEntry autoComplete="new-password"
-            value={password} onChangeText={setPassword} placeholder="At least 8 characters" />
-          {error && <ErrorText>{error}</ErrorText>}
-          <Button label="Create account" variant="dark" loading={busy}
-            disabled={!token || password.length < 8} onPress={submit} />
-          <Button label="Back to sign in" variant="ghost" className="mt-2" onPress={() => router.back()} />
-        </View>
-      </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        className="flex-1"
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, justifyContent: "center", paddingHorizontal: 24, paddingVertical: 24 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View className="mb-8 items-center">
+            <View className="h-20 w-20 items-center justify-center rounded-full bg-white">
+              <Image
+                source={require("../../assets/images/logo.png")}
+                className="h-15 w-12"
+                resizeMode="contain"
+              />
+            </View>
+            <Text className="mt-3 font-displaybold text-2xl text-cream">Join Your Company</Text>
+          </View>
+          <View className="rounded-2xl bg-paper p-5">
+            <Field label="Invite code" autoCapitalize="none" value={token} onChangeText={setToken}
+              placeholder="Paste the code from your invite email" />
+            <Field label="Your name" value={fullName} onChangeText={setFullName} placeholder="First Last" />
+            <Field label="Choose a password" secureTextEntry autoComplete="new-password"
+              value={password} onChangeText={setPassword} placeholder="At least 8 characters" />
+            {error && <ErrorText>{error}</ErrorText>}
+            <Button label="Create account" variant="dark" loading={busy}
+              disabled={!token || password.length < 8} onPress={submit} />
+            <Button label="Back to sign in" variant="ghost" className="mt-2" onPress={() => router.back()} />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 
 import { api } from "@/lib/api-client";
@@ -9,6 +10,7 @@ import { QueryBoundary } from "@/components/query";
 import { Badge, Button, Card, EmptyText, Screen, Subtitle, Title } from "@/components/ui";
 
 export default function OnboardingChecklist() {
+  const { t } = useTranslation();
   const { markOnboarded } = useAuth();
   const qc = useQueryClient();
   const checklist = useQuery({
@@ -27,12 +29,12 @@ export default function OnboardingChecklist() {
 
   return (
     <Screen>
-      <Title>Your first steps</Title>
-      <Subtitle>Your company set these up for new joiners. Check items off as you go — this list stays on your profile.</Subtitle>
+      <Title>{t("features.onboardingChecklist.title")}</Title>
+      <Subtitle>{t("features.onboardingChecklist.subtitle")}</Subtitle>
       <QueryBoundary query={checklist}>
         {(items) => (
           <View className="mt-4">
-            {items.length === 0 && <EmptyText>No checklist items — you're good to go.</EmptyText>}
+            {items.length === 0 && <EmptyText>{t("features.onboardingChecklist.empty")}</EmptyText>}
             {items.map((item) => (
               <Pressable key={item.id} disabled={item.completed} onPress={() => complete.mutate(item.id)}>
                 <Card className="mb-2 flex-row items-center justify-between">
@@ -42,7 +44,7 @@ export default function OnboardingChecklist() {
                     </Text>
                     <Text className="mt-0.5 font-sans text-xs capitalize text-faint">{item.type}</Text>
                   </View>
-                  <Badge label={item.completed ? "done" : item.required ? "required" : "optional"}
+                  <Badge label={item.completed ? t("features.onboardingChecklist.done") : item.required ? t("features.onboardingChecklist.required") : t("features.onboardingChecklist.optional")}
                     tone={item.completed ? "good" : item.required ? "warn" : "neutral"} />
                 </Card>
               </Pressable>
@@ -50,7 +52,7 @@ export default function OnboardingChecklist() {
           </View>
         )}
       </QueryBoundary>
-      <Button label="Take me to the app" variant="dark" className="mt-4" onPress={finish} />
+      <Button label={t("features.onboardingChecklist.takeMeToApp")} variant="dark" className="mt-4" onPress={finish} />
     </Screen>
   );
 }

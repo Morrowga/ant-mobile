@@ -6,6 +6,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Text, TextInput, View } from "react-native";
 
 import { api, errorDetail } from "@/lib/api-client";
@@ -14,6 +15,7 @@ import { QueryBoundary } from "@/components/query";
 import { Badge, Button, Card, ErrorText, Row, Screen } from "@/components/ui";
 
 export default function ReportDetailScreen() {
+  const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const qc = useQueryClient();
   // Backend serves this at GET /reports/{id} (flat shape per Changes_Summary A1).
@@ -40,7 +42,7 @@ export default function ReportDetailScreen() {
               <Card>
                 <Row className="justify-between">
                   <Text className="font-display text-lg text-ink">
-                    {new Date(data.report_date).toLocaleDateString("en", { weekday: "short", month: "short", day: "numeric" })}
+                    {new Date(data.report_date).toLocaleDateString(i18n.language, { weekday: "short", month: "short", day: "numeric" })}
                   </Text>
                   <Badge label={`${data.hours}h`} tone="copper" />
                 </Row>
@@ -52,15 +54,15 @@ export default function ReportDetailScreen() {
                 )}
                 {!editing && (
                   <Row className="mt-4 gap-2">
-                    <Button label="Edit" variant="outline" className="flex-1" disabled={!editable}
+                    <Button label={t("features.reportDetail.edit")} variant="outline" className="flex-1" disabled={!editable}
                       onPress={() => setEditing(true)} />
-                    <Button label="Delete" variant="danger" className="flex-1" disabled={!editable}
+                    <Button label={t("features.reportDetail.delete")} variant="danger" className="flex-1" disabled={!editable}
                       loading={remove.isPending} onPress={() => remove.mutate()} />
                   </Row>
                 )}
                 {!editable && (
                   <Text className="mt-2 font-sans text-xs text-faint">
-                    Locked — reports can only be edited on the day they're written. Your manager can still comment.
+                    {t("features.reportDetail.lockedNote")}
                   </Text>
                 )}
               </Card>
@@ -69,7 +71,7 @@ export default function ReportDetailScreen() {
               {data.ai_analysis ? (
                 <Card className="mt-3">
                   <Row className="justify-between">
-                    <Text className="font-sansbold text-[14px] text-ink">Workday pace</Text>
+                    <Text className="font-sansbold text-[14px] text-ink">{t("features.reportDetail.workdayPace")}</Text>
                     <Badge
                       label={data.ai_analysis.pace_label}
                       tone={data.ai_analysis.pace_label === "heavy" ? "warn" : data.ai_analysis.pace_label === "steady" ? "good" : "neutral"}
@@ -80,19 +82,19 @@ export default function ReportDetailScreen() {
               ) : (
                 <Card className="mt-3">
                   <Text className="font-sans text-[13px] text-faint">
-                    Pace analysis isn't available for this report — it appears shortly after submitting, on companies with the Mid plan or above.
+                    {t("features.reportDetail.paceUnavailable")}
                   </Text>
                 </Card>
               )}
 
               <Card className="mt-3">
-                <Text className="mb-2 font-sansbold text-[14px] text-ink">Manager comments</Text>
-                {data.comments.length === 0 && <Text className="font-sans text-[13px] text-faint">No comments yet.</Text>}
+                <Text className="mb-2 font-sansbold text-[14px] text-ink">{t("features.reportDetail.managerComments")}</Text>
+                {data.comments.length === 0 && <Text className="font-sans text-[13px] text-faint">{t("features.reportDetail.noComments")}</Text>}
                 {data.comments.map((comment) => (
                   <View key={comment.id} className="mb-2 rounded-xl bg-cream p-3">
                     <Text className="font-sans text-[13px] text-ink">{comment.comment}</Text>
                     <Text className="mt-1 font-sans text-[11px] text-faint">
-                      {new Date(comment.created_at).toLocaleString()}
+                      {new Date(comment.created_at).toLocaleString(i18n.language)}
                     </Text>
                   </View>
                 ))}
@@ -107,6 +109,7 @@ export default function ReportDetailScreen() {
 }
 
 function EditForm({ data, onDone }: { data: ReportDetail; onDone: () => void }) {
+  const { t } = useTranslation();
   const [hours, setHours] = useState(String(data.hours));
   const [summary, setSummary] = useState(data.summary);
   const [error, setError] = useState<string | null>(null);
@@ -122,7 +125,7 @@ function EditForm({ data, onDone }: { data: ReportDetail; onDone: () => void }) 
       <TextInput multiline value={summary} onChangeText={setSummary} textAlignVertical="top"
         className="min-h-[80px] rounded-xl border border-line bg-cream px-4 py-3 font-sans text-ink" />
       {error && <ErrorText>{error}</ErrorText>}
-      <Button label="Save changes" variant="dark" className="mt-2" loading={save.isPending} onPress={() => save.mutate()} />
+      <Button label={t("features.reportDetail.saveChanges")} variant="dark" className="mt-2" loading={save.isPending} onPress={() => save.mutate()} />
     </View>
   );
 }

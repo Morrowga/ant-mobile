@@ -4,6 +4,7 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 
 import { api } from "@/lib/api-client";
@@ -18,9 +19,10 @@ interface CheckinPrompt {
   responded_at: string | null;
 }
 
-const PROMPT_LABEL: Record<CheckinPrompt["type"], string> = {
-  sleep_checkin: "Sleep check-in",
-  mood_water_checkin: "Mood & water check-in",
+/** labelKey resolves under features.health.promptTypes.* */
+const PROMPT_LABEL_KEY: Record<CheckinPrompt["type"], string> = {
+  sleep_checkin: "sleepCheckin",
+  mood_water_checkin: "moodWaterCheckin",
 };
 
 const PROMPT_ROUTE: Record<CheckinPrompt["type"], string> = {
@@ -29,6 +31,7 @@ const PROMPT_ROUTE: Record<CheckinPrompt["type"], string> = {
 };
 
 export default function Health() {
+  const { t, i18n } = useTranslation();
   const dashboard = useQuery({
     queryKey: ["health", "dashboard"],
     queryFn: async () => (await api.get<HealthDashboard>("/health/me/dashboard")).data,
@@ -48,8 +51,8 @@ export default function Health() {
 
   return (
     <Screen>
-      <Title>Your health</Title>
-      <Subtitle>Only you can see this. Your company only ever sees anonymous team averages — never your entries.</Subtitle>
+      <Title>{t("features.health.pageTitle")}</Title>
+      <Subtitle>{t("features.health.pageDescription")}</Subtitle>
 
       {/* This IS the primary content of this area now -- not a separate
           section alongside manual logging. Shows every currently
@@ -59,13 +62,13 @@ export default function Health() {
           answered, it disappears from this list on its own -- the
           disappearance IS the success confirmation, reinforced by a brief
           "Logged!" state inside each dialog before it closes. */}
-      <SectionTitle>Reminders</SectionTitle>
+      <SectionTitle>{t("features.health.reminders")}</SectionTitle>
       <QueryBoundary query={pending}>
         {(rows) => (
           <View className="gap-2">
             {rows.length === 0 && (
               <Card className="items-center py-6">
-                <Text className="font-sans text-sm text-faint">All caught up — nothing waiting right now.</Text>
+                <Text className="font-sans text-sm text-faint">{t("features.health.allCaughtUp")}</Text>
               </Card>
             )}
             {rows.map((p) => (
@@ -73,10 +76,10 @@ export default function Health() {
                 <Card className="border-copper/40 bg-[#f0e0cf]/40">
                   <Row className="justify-between">
                     <View>
-                      <Text className="font-sansbold text-[14px] text-espresso">{PROMPT_LABEL[p.type]}</Text>
-                      <Text className="mt-0.5 font-sans text-xs text-faint">Tap to answer now</Text>
+                      <Text className="font-sansbold text-[14px] text-espresso">{t(`features.health.promptTypes.${PROMPT_LABEL_KEY[p.type]}`)}</Text>
+                      <Text className="mt-0.5 font-sans text-xs text-faint">{t("features.health.tapToAnswer")}</Text>
                     </View>
-                    <Badge label="unanswered" tone="warn" />
+                    <Badge label={t("features.health.unanswered")} tone="warn" />
                   </Row>
                 </Card>
               </Pressable>
@@ -85,37 +88,37 @@ export default function Health() {
         )}
       </QueryBoundary>
 
-      <SectionTitle>Today's check-ins</SectionTitle>
+      <SectionTitle>{t("features.health.todaysCheckins")}</SectionTitle>
       <QueryBoundary query={todaysPrompts}>
         {(rows) => (
           <View className="gap-2">
             {rows.length === 0 && (
               <Text className="py-2 font-sans text-sm text-faint">
-                No reminders sent yet today — they'll appear here once you check in.
+                {t("features.health.noRemindersSentYet")}
               </Text>
             )}
             {rows.map((p) => (
               <Card key={p.id} className="flex-row items-center justify-between py-3">
                 <View>
-                  <Text className="font-sans text-[14px] text-ink">{PROMPT_LABEL[p.type]}</Text>
+                  <Text className="font-sans text-[14px] text-ink">{t(`features.health.promptTypes.${PROMPT_LABEL_KEY[p.type]}`)}</Text>
                   <Text className="mt-0.5 font-sans text-xs text-faint">
-                    {new Date(p.sent_at).toLocaleTimeString("en", { hour: "numeric", minute: "2-digit" })}
+                    {new Date(p.sent_at).toLocaleTimeString(i18n.language, { hour: "numeric", minute: "2-digit" })}
                   </Text>
                 </View>
-                <Badge label={p.responded_at ? "answered" : "unanswered"} tone={p.responded_at ? "good" : "warn"} />
+                <Badge label={p.responded_at ? t("features.health.answered") : t("features.health.unanswered")} tone={p.responded_at ? "good" : "warn"} />
               </Card>
             ))}
           </View>
         )}
       </QueryBoundary>
 
-      <SectionTitle>This week</SectionTitle>
+      <SectionTitle>{t("features.health.thisWeek")}</SectionTitle>
       <QueryBoundary query={dashboard}>
         {(data) => (
           <View className="gap-2">
-            <Stat label="Average water / day" value={`${Math.round(sum(data.water) / 7)} ml`} />
-            <Stat label="Average mood" value={data.mood.length ? (sum(data.mood) / data.mood.length).toFixed(1) + " / 5" : "—"} />
-            <Stat label="Average sleep / day" value={data.sleep.length ? `${(sum(data.sleep) / 7).toFixed(1)} h` : "—"} />
+            <Stat label={t("features.health.avgWaterPerDay")} value={t("features.health.mlValue", { value: Math.round(sum(data.water) / 7) })} />
+            <Stat label={t("features.health.avgMood")} value={data.mood.length ? t("features.health.moodValue", { value: (sum(data.mood) / data.mood.length).toFixed(1) }) : "—"} />
+            <Stat label={t("features.health.avgSleepPerDay")} value={data.sleep.length ? t("features.health.hoursValue", { value: (sum(data.sleep) / 7).toFixed(1) }) : "—"} />
           </View>
         )}
       </QueryBoundary>

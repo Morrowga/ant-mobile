@@ -4,6 +4,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, TextInput, Text, View } from "react-native";
 
 import { api, errorDetail } from "@/lib/api-client";
@@ -11,6 +12,7 @@ import type { PostType } from "@/lib/types";
 import { Button, Card, ErrorText, Row, Screen } from "@/components/ui";
 
 export default function NewKnowledgePost() {
+  const { t } = useTranslation();
   const { post_type: initialType } = useLocalSearchParams<{ post_type?: string }>();
   const qc = useQueryClient();
   const [postType, setPostType] = useState<PostType>(initialType === "sharing" ? "sharing" : "knowledge");
@@ -34,34 +36,34 @@ export default function NewKnowledgePost() {
   return (
     <Screen>
       <Card>
-        <Text className="mb-1.5 font-sansmed text-[13px] text-ink">Type</Text>
+        <Text className="mb-1.5 font-sansmed text-[13px] text-ink">{t("features.knowledgeNew.type")}</Text>
         <Row className="mb-3 gap-2">
           <Pressable onPress={() => setPostType("knowledge")} className="flex-1">
             <View className={`items-center rounded-xl border py-2.5 ${!isSharing ? "border-espresso bg-espresso" : "border-line bg-cream"}`}>
-              <Text className={`font-sansbold text-[13px] ${!isSharing ? "text-cream" : "text-ink"}`}>Knowledge</Text>
+              <Text className={`font-sansbold text-[13px] ${!isSharing ? "text-cream" : "text-ink"}`}>{t("features.knowledge.tabs.knowledge")}</Text>
             </View>
           </Pressable>
           <Pressable onPress={() => setPostType("sharing")} className="flex-1">
             <View className={`items-center rounded-xl border py-2.5 ${isSharing ? "border-espresso bg-espresso" : "border-line bg-cream"}`}>
-              <Text className={`font-sansbold text-[13px] ${isSharing ? "text-cream" : "text-ink"}`}>Sharing</Text>
+              <Text className={`font-sansbold text-[13px] ${isSharing ? "text-cream" : "text-ink"}`}>{t("features.knowledge.tabs.sharing")}</Text>
             </View>
           </Pressable>
         </Row>
         <Text className="mb-3 font-sans text-[12px] text-faint">
           {isSharing
-            ? "Open to everyone to post — no category, just a post everyone in the company can comment on."
-            : "Company know-how, governed by your Knowledge settings."}
+            ? t("features.knowledgeNew.sharingHint")
+            : t("features.knowledgeNew.knowledgeHint")}
         </Text>
 
-        <Text className="mb-1.5 font-sansmed text-[13px] text-ink">Title</Text>
+        <Text className="mb-1.5 font-sansmed text-[13px] text-ink">{t("features.knowledgeNew.titleLabel")}</Text>
         <TextInput value={title} onChangeText={setTitle} placeholderTextColor="#8a8580"
-          placeholder="Something worth sharing" className="mb-3 h-12 rounded-xl border border-line bg-cream px-4 font-sans text-ink" />
-        <Text className="mb-1.5 font-sansmed text-[13px] text-ink">Body</Text>
+          placeholder={t("features.knowledgeNew.titlePlaceholder")} className="mb-3 h-12 rounded-xl border border-line bg-cream px-4 font-sans text-ink" />
+        <Text className="mb-1.5 font-sansmed text-[13px] text-ink">{t("features.knowledgeNew.bodyLabel")}</Text>
         <TextInput multiline value={body} onChangeText={setBody} textAlignVertical="top" placeholderTextColor="#8a8580"
-          placeholder="Write it the way you'd explain it to a new teammate."
+          placeholder={t("features.knowledgeNew.bodyPlaceholder")}
           className="min-h-[140px] rounded-xl border border-line bg-cream px-4 py-3 font-sans text-ink" />
         {error && <ErrorText>{error}</ErrorText>}
-        <Button label="Publish" variant="dark" className="mt-3"
+        <Button label={t("features.knowledgeNew.publish")} variant="dark" className="mt-3"
           disabled={title.trim().length < 3 || body.trim().length < 10}
           loading={create.isPending} onPress={() => create.mutate()} />
       </Card>

@@ -21,6 +21,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Modal, Pressable, Text, TextInput, View } from "react-native";
 
 import { api, errorDetail } from "@/lib/api-client";
@@ -36,11 +37,11 @@ interface TodayInvoice {
   deductions_enabled: boolean;
 }
 
-const fmtMinutes = (mins: number) => {
-  if (mins < 60) return `${mins} min`;
+const fmtMinutes = (mins: number, t: (key: string, opts?: Record<string, unknown>) => string) => {
+  if (mins < 60) return t("features.newReport.minutesShort", { count: mins });
   const h = Math.floor(mins / 60);
   const m = mins % 60;
-  return `${h}h ${m}min`;
+  return t("features.newReport.hoursMinutesShort", { h, m });
 };
 
 /** e.g. hours="0", minutes="15" -> 0.25 */
@@ -51,6 +52,7 @@ const toDecimalHours = (hours: string, minutes: string) => {
 };
 
 export default function NewReport() {
+  const { t } = useTranslation();
   const { forCheckout } = useLocalSearchParams<{ forCheckout?: string }>();
   const isForCheckout = forCheckout === "true";
   const qc = useQueryClient();
@@ -134,7 +136,7 @@ export default function NewReport() {
 
   // ---- pending health check-in: hide the whole form, show one button ----
   if (pending.isLoading) {
-    return <Screen><Text className="font-sans text-sm text-faint">Loading…</Text></Screen>;
+    return <Screen><Text className="font-sans text-sm text-faint">{t("features.newReport.loading")}</Text></Screen>;
   }
 
   const pendingPrompts = pending.data ?? [];
@@ -152,13 +154,13 @@ export default function NewReport() {
     return (
       <Screen>
         <Card className="items-center py-8">
-          <Text className="text-center font-display text-lg text-ink">Answer your health check-in first</Text>
+          <Text className="text-center font-display text-lg text-ink">{t("features.newReport.answerHealthFirst")}</Text>
           <Text className="mt-2 text-center font-sans text-[13px] text-faint">
             {pendingPrompts.length > 1
-              ? `You have ${pendingPrompts.length} unanswered check-ins today.`
-              : "Just one quick question, then you can come straight back here."}
+              ? t("features.newReport.multiplePending", { count: pendingPrompts.length })
+              : t("features.newReport.singlePendingMobile")}
           </Text>
-          <Button label="Answer now" variant="dark" className="mt-4 w-full" onPress={goAnswer} />
+          <Button label={t("features.newReport.answerNow")} variant="dark" className="mt-4 w-full" onPress={goAnswer} />
         </Card>
       </Screen>
     );
@@ -170,16 +172,16 @@ export default function NewReport() {
         <Card className="mb-3 bg-latte/40">
           <Text className="font-sansmed text-[13px] text-espresso">
             {actualMinutes !== null
-              ? `You've actually worked ${fmtMinutes(actualMinutes)} today (breaks excluded). Log your tasks below — the total can be less, but not more.`
-              : "Fill out today's report to finish checking out."}
+              ? t("features.newReport.actualWorkedNote", { time: fmtMinutes(actualMinutes, t) })
+              : t("features.newReport.fillOutToFinish")}
           </Text>
         </Card>
       )}
 
       {entries.map((entry, i) => (
         <Card key={i} className="mb-3">
-          <Text className="mb-2 font-sansbold text-[13px] text-faint">ENTRY {i + 1}</Text>
-          <Text className="mb-1.5 font-sansmed text-[13px] text-ink">Project</Text>
+          <Text className="mb-2 font-sansbold text-[13px] text-faint">{t("features.newReport.entryNumberUpper", { number: i + 1 })}</Text>
+          <Text className="mb-1.5 font-sansmed text-[13px] text-ink">{t("features.newReport.project")}</Text>
           <Row className="mb-3 flex-wrap gap-2">
             {(projects.data ?? []).map((project) => (
               <Pressable key={project.id} onPress={() => update(i, { project_id: project.id })}>
@@ -187,7 +189,7 @@ export default function NewReport() {
               </Pressable>
             ))}
           </Row>
-          <Text className="mb-1.5 font-sansmed text-[13px] text-ink">Time spent</Text>
+          <Text className="mb-1.5 font-sansmed text-[13px] text-ink">{t("features.newReport.timeSpent")}</Text>
           <Row className="mb-3 gap-2">
             <View className="flex-1">
               <TextInput
@@ -198,7 +200,7 @@ export default function NewReport() {
                 placeholder="0"
                 placeholderTextColor="#8a8580"
               />
-              <Text className="mt-1 text-center font-sans text-[11px] text-faint">hours</Text>
+              <Text className="mt-1 text-center font-sans text-[11px] text-faint">{t("features.newReport.hoursUnit")}</Text>
             </View>
             <View className="flex-1">
               <TextInput
@@ -213,16 +215,16 @@ export default function NewReport() {
                 placeholder="0"
                 placeholderTextColor="#8a8580"
               />
-              <Text className="mt-1 text-center font-sans text-[11px] text-faint">minutes</Text>
+              <Text className="mt-1 text-center font-sans text-[11px] text-faint">{t("features.newReport.minutesUnit")}</Text>
             </View>
           </Row>
-          <Text className="mb-1.5 font-sansmed text-[13px] text-ink">What did you work on?</Text>
+          <Text className="mb-1.5 font-sansmed text-[13px] text-ink">{t("features.newReport.whatDidYouWorkOn")}</Text>
           <TextInput
             multiline
             className="min-h-[80px] rounded-xl border border-line bg-cream px-4 py-3 font-sans text-ink"
             value={entry.summary}
             onChangeText={(summary) => update(i, { summary })}
-            placeholder="A few sentences — this is what your manager (and the pace analysis) reads."
+            placeholder={t("features.newReport.summaryPlaceholder")}
             placeholderTextColor="#8a8580"
             textAlignVertical="top"
           />
@@ -231,24 +233,26 @@ export default function NewReport() {
 
       {overCeiling && (
         <ErrorText>
-          Total entered ({fmtMinutes(Math.round(totalEnteredHours * 60))}) is more than your actual working hours
-          ({actualMinutes !== null ? fmtMinutes(actualMinutes) : "?"}). Reduce your entries to fit.
+          {t("features.newReport.overCeiling", {
+            entered: fmtMinutes(Math.round(totalEnteredHours * 60), t),
+            actual: actualMinutes !== null ? fmtMinutes(actualMinutes, t) : "?",
+          })}
         </ErrorText>
       )}
       {error && <ErrorText>{error}</ErrorText>}
 
       {isForCheckout ? (
         <Row className="mt-3 gap-2">
-          <Button label="Today invoice" variant="outline" className="flex-1" onPress={() => setInvoiceOpen(true)} />
-          <Button label="Add another entry" variant="outline" className="flex-1"
+          <Button label={t("features.newReport.todayInvoice")} variant="outline" className="flex-1" onPress={() => setInvoiceOpen(true)} />
+          <Button label={t("features.newReport.addAnotherEntry")} variant="outline" className="flex-1"
             onPress={() => setEntries((prev) => [...prev, { project_id: null, hours: "", minutes: "", summary: "" }])} />
         </Row>
       ) : (
-        <Button label="Add another entry" variant="outline" className="mt-3"
+        <Button label={t("features.newReport.addAnotherEntry")} variant="outline" className="mt-3"
           onPress={() => setEntries((prev) => [...prev, { project_id: null, hours: "", minutes: "", summary: "" }])} />
       )}
 
-      <Button label={isForCheckout ? "Submit & check out" : "Submit report"} variant="dark" className="mt-3"
+      <Button label={isForCheckout ? t("features.newReport.submitAndCheckOut") : t("features.newReport.submitReport")} variant="dark" className="mt-3"
         disabled={!valid} loading={submit.isPending} onPress={() => submit.mutate()} />
 
       {/* "Nothing to report" doesn't create a Report row, so it can't
@@ -256,7 +260,7 @@ export default function NewReport() {
           confusing dead end. */}
       {!isForCheckout && (
         <View className="mt-6 border-t border-line pt-4">
-          <Button label="Nothing to report today" variant="ghost"
+          <Button label={t("features.newReport.nothingToReport")} variant="ghost"
             loading={nothingToReport.isPending} onPress={() => nothingToReport.mutate()} />
         </View>
       )}
@@ -269,40 +273,41 @@ export default function NewReport() {
 function TodayInvoiceModal({ open, onClose, invoice, loading }: {
   open: boolean; onClose: () => void; invoice: TodayInvoice | undefined; loading: boolean;
 }) {
+  const { t } = useTranslation();
   return (
     <Modal visible={open} animationType="fade" transparent onRequestClose={onClose}>
       <View className="flex-1 items-center justify-center bg-ink/40 px-6">
         <View className="w-full rounded-2xl bg-paper p-5">
-          <Text className="font-display text-lg text-ink">Today's invoice</Text>
+          <Text className="font-display text-lg text-ink">{t("features.newReport.invoiceDialog.title")}</Text>
           {loading || !invoice ? (
-            <Text className="mt-3 font-sans text-sm text-faint">Loading…</Text>
+            <Text className="mt-3 font-sans text-sm text-faint">{t("features.newReport.invoiceDialog.loading")}</Text>
           ) : (
             <View className="mt-3">
-              <InvoiceRow label="Scheduled shift" value={fmtMinutes(invoice.scheduled_minutes)} />
-              <InvoiceRow label="Time checked in" value={fmtMinutes(invoice.elapsed_minutes)} />
-              <InvoiceRow label="Break time (excluded)" value={`− ${fmtMinutes(invoice.break_minutes)}`} muted />
+              <InvoiceRow label={t("features.newReport.invoiceDialog.scheduledShift")} value={fmtMinutes(invoice.scheduled_minutes, t)} />
+              <InvoiceRow label={t("features.newReport.invoiceDialog.timeCheckedIn")} value={fmtMinutes(invoice.elapsed_minutes, t)} />
+              <InvoiceRow label={t("features.newReport.invoiceDialog.breakTimeExcluded")} value={`− ${fmtMinutes(invoice.break_minutes, t)}`} muted />
               <InvoiceRow
-                label="Late arrival"
-                value={invoice.late_minutes > 0 ? fmtMinutes(invoice.late_minutes) : "none"}
+                label={t("features.newReport.invoiceDialog.lateArrival")}
+                value={invoice.late_minutes > 0 ? fmtMinutes(invoice.late_minutes, t) : t("features.newReport.invoiceDialog.none")}
                 muted
               />
               {invoice.deductions_enabled ? (
                 <InvoiceRow
-                  label="Unanswered presence checks"
-                  value={invoice.no_response_minutes > 0 ? `− ${fmtMinutes(invoice.no_response_minutes)}` : "none"}
+                  label={t("features.newReport.invoiceDialog.unansweredPresenceChecks")}
+                  value={invoice.no_response_minutes > 0 ? `− ${fmtMinutes(invoice.no_response_minutes, t)}` : t("features.newReport.invoiceDialog.none")}
                   muted={invoice.no_response_minutes === 0}
                 />
               ) : (
                 <Text className="mt-1 font-sans text-[12px] text-faint">
-                  No-response deductions are turned off by your company.
+                  {t("features.newReport.invoiceDialog.deductionsOffNote")}
                 </Text>
               )}
               <View className="mt-3 border-t border-line pt-3">
-                <InvoiceRow label="Credited hours" value={fmtMinutes(invoice.credited_minutes)} bold />
+                <InvoiceRow label={t("features.newReport.invoiceDialog.creditedHours")} value={fmtMinutes(invoice.credited_minutes, t)} bold />
               </View>
             </View>
           )}
-          <Button label="Close" variant="dark" className="mt-4" onPress={onClose} />
+          <Button label={t("features.newReport.invoiceDialog.close")} variant="dark" className="mt-4" onPress={onClose} />
         </View>
       </View>
     </Modal>

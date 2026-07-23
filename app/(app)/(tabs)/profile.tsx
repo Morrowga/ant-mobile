@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 
 import { api } from "@/lib/api-client";
@@ -8,6 +9,7 @@ import type { CompanyInfo, TeamInfo } from "@/lib/types";
 import { Button, Card, Row, Screen, SectionTitle, Subtitle, Title } from "@/components/ui";
 
 export default function Profile() {
+  const { t } = useTranslation();
   const { me, signOut } = useAuth();
   const team = useQuery({
     queryKey: ["me", "team"],
@@ -22,27 +24,30 @@ export default function Profile() {
     <Screen>
       <Title>{me?.full_name ?? me?.email}</Title>
       <Subtitle>
-        {me?.role === "manager" ? "Manager — team views live on the web dashboard" : "Employee"}
+        {me?.role === "manager" ? t("features.profile.managerRole") : t("features.profile.employeeRole")}
         {company.data ? ` · ${company.data.name}` : ""}
         {team.data?.name ? ` · ${team.data.name}` : ""}
       </Subtitle>
 
-      <SectionTitle>Your records</SectionTitle>
-      <MenuLink href="/(app)/certificates" label="Certificates" hint="Auto-issued monthly and yearly" />
-      <MenuLink href="/(app)/recognitions" label="Kudos received" hint="Recognition from your managers" />
-      <MenuLink href="/(app)/attendance-history" label="Attendance history" hint="Your check-in record" />
-      <MenuLink href="/(app)/invoices" label="Invoices" hint="Generated payroll invoices" />
+      <SectionTitle>{t("features.profile.yourRecords")}</SectionTitle>
+      <MenuLink href="/(app)/certificates" label={t("features.profile.certificates")} hint={t("features.profile.certificatesHint")} />
+      <MenuLink href="/(app)/recognitions" label={t("features.profile.kudosReceived")} hint={t("features.profile.kudosHint")} />
+      <MenuLink href="/(app)/attendance-history" label={t("features.profile.attendanceHistory")} hint={t("features.profile.attendanceHint")} />
+      <MenuLink href="/(app)/invoices" label={t("features.profile.invoices")} hint={t("features.profile.invoicesHint")} />
 
-      <SectionTitle>Have a say</SectionTitle>
-      <MenuLink href="/(app)/feedback" label="Feedback & complaints" hint="Anonymous option available" />
+      <SectionTitle>{t("features.profile.haveASay")}</SectionTitle>
+      <MenuLink href="/(app)/feedback" label={t("features.profile.feedback")} hint={t("features.profile.feedbackHint")} />
 
-      <SectionTitle>Settings</SectionTitle>
-      <MenuLink href="/(app)/desk-location" label="Desk location" hint="Update where you check in from" />
-      <MenuLink href="/(app)/notification-preferences" label="Notification preferences" hint="Mute what you don't need" />
-      <MenuLink href="/(app)/change-password" label="Change password" />
+      <SectionTitle>{t("features.profile.settings")}</SectionTitle>
+      <MenuLink href="/(app)/desk-location" label={t("features.profile.deskLocation")} hint={t("features.profile.deskLocationHint")} />
+      <MenuLink href="/(app)/notification-preferences" label={t("features.profile.notificationPreferences")} hint={t("features.profile.notificationPreferencesHint")} />
+      {/* New: same binary toggle as the portal -- switch back to English,
+          or back to whatever the company assigned. See app/(app)/language.tsx. */}
+      <MenuLink href="/(app)/language" label={t("features.profile.language")} hint={t("features.profile.languageHint")} />
+      <MenuLink href="/(app)/change-password" label={t("features.profile.changePassword")} />
 
       <View className="mt-8">
-        <Button label="Sign out" variant="outline" onPress={signOut} />
+        <Button label={t("features.profile.signOut")} variant="outline" onPress={signOut} />
       </View>
     </Screen>
   );

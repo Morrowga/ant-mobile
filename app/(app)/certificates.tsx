@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import * as Sharing from "expo-sharing";
 import { useState } from "react";
 import * as FileSystem from "expo-file-system/legacy";
+import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 import { api, errorDetail } from "@/lib/api-client";
@@ -29,6 +30,7 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
 }
 
 export default function Certificates() {
+  const { t } = useTranslation();
   const certificates = useQuery({
     queryKey: ["certificates", "me"],
     queryFn: async () => (await api.get<Certificate[]>("/certificates/me")).data,
@@ -54,7 +56,7 @@ export default function Certificates() {
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(fileUri, {
           mimeType: "application/pdf",
-          dialogTitle: "Save certificate",
+          dialogTitle: t("features.certificates.saveCertificate"),
           UTI: "com.adobe.pdf",
         });
       }
@@ -66,13 +68,13 @@ export default function Certificates() {
   return (
     <Screen>
       <Subtitle>
-        Issued automatically at the end of every month and year — a portable record of your work. No approval needed.
+        {t("features.certificates.description")}
       </Subtitle>
       {error && <ErrorText>{error}</ErrorText>}
       <QueryBoundary query={certificates}>
         {(rows) => (
           <View className="mt-4">
-            {rows.length === 0 && <EmptyText>Your first certificate arrives at the end of this month.</EmptyText>}
+            {rows.length === 0 && <EmptyText>{t("features.certificates.empty")}</EmptyText>}
             {rows.map((certificate) => {
               const isDownloading = downloadingId === certificate.id;
               return (
@@ -84,7 +86,7 @@ export default function Certificates() {
                   <Card className="mb-2 flex-row items-center justify-between py-3">
                     <View>
                       <Text className="font-sansmed text-[14px] capitalize text-ink">
-                        {certificate.period_type} certificate
+                        {t(`features.certificates.${certificate.period_type}Certificate`)}
                       </Text>
                       <Text className="font-sans text-xs text-faint">
                         {certificate.period_start} → {certificate.period_end}
@@ -94,7 +96,7 @@ export default function Certificates() {
                       <ActivityIndicator size="small" color="#a8672f" />
                     ) : (
                       <Badge
-                        label={certificate.pdf_url ? "save" : "generating"}
+                        label={certificate.pdf_url ? t("features.certificates.save") : t("features.certificates.generating")}
                         tone={certificate.pdf_url ? "copper" : "neutral"}
                       />
                     )}

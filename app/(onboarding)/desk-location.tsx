@@ -1,5 +1,6 @@
 import { router } from "expo-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Text } from "react-native";
 
 import { api, errorDetail } from "@/lib/api-client";
@@ -8,6 +9,7 @@ import { Button, Card, ErrorText, Screen, Subtitle, Title } from "@/components/u
 
 /** One-time GPS pin of the usual work spot — POST /attendance/desk-location. */
 export default function DeskLocation() {
+  const { t } = useTranslation();
   const [pinned, setPinned] = useState<{ lat: number; lng: number } | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,24 +30,24 @@ export default function DeskLocation() {
 
   return (
     <Screen>
-      <Title>Pin your desk</Title>
-      <Subtitle>Stand at your usual work spot and pin it once — attendance alerts use this as your home base.</Subtitle>
+      <Title>{t("features.onboardingDeskLocation.title")}</Title>
+      <Subtitle>{t("features.onboardingDeskLocation.subtitle")}</Subtitle>
       <Card className="mt-5 items-center py-8">
         {pinned ? (
           <>
-            <Text className="font-display text-lg text-ink">Pinned ✓</Text>
+            <Text className="font-display text-lg text-ink">{t("features.onboardingDeskLocation.pinned")}</Text>
             <Text className="mt-1 font-sans text-xs text-faint">
               {pinned.lat.toFixed(5)}, {pinned.lng.toFixed(5)}
             </Text>
           </>
         ) : (
-          <Text className="font-sans text-sm text-faint">No pin yet</Text>
+          <Text className="font-sans text-sm text-faint">{t("features.onboardingDeskLocation.noPinYet")}</Text>
         )}
       </Card>
       {error && <ErrorText>{error}</ErrorText>}
-      <Button label={pinned ? "Re-pin here" : "Pin my current spot"} className="mt-4" loading={busy} onPress={pin} />
+      <Button label={pinned ? t("features.onboardingDeskLocation.repinHere") : t("features.onboardingDeskLocation.pinCurrentSpot")} className="mt-4" loading={busy} onPress={pin} />
       <Button
-        label={pinned ? "Continue" : "Skip for now"}
+        label={pinned ? t("features.onboardingDeskLocation.continue") : t("features.onboardingDeskLocation.skipForNow")}
         variant={pinned ? "dark" : "ghost"}
         className="mt-2"
         onPress={() => router.push("/(onboarding)/checklist")}

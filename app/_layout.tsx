@@ -8,6 +8,7 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 
 import { AuthProvider } from "@/lib/auth";
+import "@/lib/i18n";
 import { startQueueSync } from "@/lib/offline-queue";
 import { queryClient } from "@/lib/query-client";
 import "../global.css";

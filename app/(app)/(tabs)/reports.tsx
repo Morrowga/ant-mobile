@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "expo-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 
 import { api } from "@/lib/api-client";
@@ -11,6 +12,7 @@ import { Badge, Card, EmptyText, Row, Screen, SectionTitle, Subtitle, Title } fr
 export const isEditable = (report: Report) => new Date(report.editable_until).getTime() > Date.now();
 
 export default function Reports() {
+  const { t, i18n } = useTranslation();
   const [tab, setTab] = useState<"daily" | "overtime">("daily");
   const reports = useQuery({
     queryKey: ["reports", "me"],
@@ -30,18 +32,18 @@ export default function Reports() {
 
   return (
     <Screen refreshing={isRefreshing} onRefresh={handleRefresh}>
-      <Title>Your reports</Title>
-      <Subtitle>What you worked on, day by day. Reports lock at midnight — edits are same-day only.</Subtitle>
+      <Title>{t("features.reports.pageTitle")}</Title>
+      <Subtitle>{t("features.reports.pageDescription")}</Subtitle>
 
       <Row className="mt-4 gap-2">
         <Pressable onPress={() => setTab("daily")} className="flex-1">
           <View className={`items-center rounded-xl border py-2.5 ${tab === "daily" ? "border-espresso bg-espresso" : "border-line bg-paper"}`}>
-            <Text className={`font-sansbold text-[13px] ${tab === "daily" ? "text-cream" : "text-ink"}`}>Daily Report</Text>
+            <Text className={`font-sansbold text-[13px] ${tab === "daily" ? "text-cream" : "text-ink"}`}>{t("features.reports.tabs.daily")}</Text>
           </View>
         </Pressable>
         <Pressable onPress={() => setTab("overtime")} className="flex-1">
           <View className={`items-center rounded-xl border py-2.5 ${tab === "overtime" ? "border-espresso bg-espresso" : "border-line bg-paper"}`}>
-            <Text className={`font-sansbold text-[13px] ${tab === "overtime" ? "text-cream" : "text-ink"}`}>Overtime</Text>
+            <Text className={`font-sansbold text-[13px] ${tab === "overtime" ? "text-cream" : "text-ink"}`}>{t("features.reports.tabs.overtime")}</Text>
           </View>
         </Pressable>
       </Row>
@@ -50,19 +52,19 @@ export default function Reports() {
         <QueryBoundary query={reports}>
           {(rows) => (
             <>
-              <SectionTitle>Your reports</SectionTitle>
+              <SectionTitle>{t("features.reports.pageTitle")}</SectionTitle>
               <View>
-                {rows.length === 0 && <EmptyText>No reports yet — submit your first from the Home screen.</EmptyText>}
+                {rows.length === 0 && <EmptyText>{t("features.reports.daily.empty")}</EmptyText>}
                 {rows.map((report) => (
                   <Link key={report.id} href={{ pathname: "/(app)/report/[id]", params: { id: String(report.id) } }} asChild>
                     <Pressable>
                       <Card className="mb-2">
                         <Row className="justify-between">
                           <Text className="font-sansbold text-[15px] text-ink">
-                            {new Date(report.report_date).toLocaleDateString("en", { month: "short", day: "numeric" })}
+                            {new Date(report.report_date).toLocaleDateString(i18n.language, { month: "short", day: "numeric" })}
                             {"  ·  "}{report.hours}h
                           </Text>
-                          {isEditable(report) ? <Badge label="editable today" tone="copper" /> : <Badge label="locked" />}
+                          {isEditable(report) ? <Badge label={t("features.reports.daily.editableToday")} tone="copper" /> : <Badge label={t("features.reports.daily.locked")} />}
                         </Row>
                         <Text numberOfLines={2} className="mt-1 font-sans text-[13px] text-faint">{report.summary}</Text>
                       </Card>
@@ -78,20 +80,20 @@ export default function Reports() {
           <QueryBoundary query={overtime}>
             {(rows) => (
               <View>
-                {rows.length === 0 && <EmptyText>No overtime sessions yet.</EmptyText>}
+                {rows.length === 0 && <EmptyText>{t("features.reports.overtime.empty")}</EmptyText>}
                 {rows.map((ot) => (
                   <Link key={ot.id} href={{ pathname: "/(app)/overtime/[id]", params: { id: String(ot.id) } }} asChild>
                     <Pressable>
                       <Card className="mb-2">
                         <Row className="justify-between">
                           <Text className="font-sansbold text-[15px] text-ink">
-                            {new Date(ot.start_at).toLocaleDateString("en", { month: "short", day: "numeric" })}
+                            {new Date(ot.start_at).toLocaleDateString(i18n.language, { month: "short", day: "numeric" })}
                             {ot.hours !== null ? `  ·  ${ot.hours}h` : ""}
                           </Text>
-                          {ot.end_at ? <Badge label="closed" /> : <Badge label="in progress" tone="warn" />}
+                          {ot.end_at ? <Badge label={t("features.reports.overtime.closed")} /> : <Badge label={t("features.reports.overtime.inProgress")} tone="warn" />}
                         </Row>
                         <Text numberOfLines={2} className="mt-1 font-sans text-[13px] text-faint">
-                          {ot.summary ?? ot.reason ?? "No summary yet"}
+                          {ot.summary ?? ot.reason ?? t("features.reports.overtime.noSummaryYet")}
                         </Text>
                       </Card>
                     </Pressable>

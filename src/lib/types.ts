@@ -8,7 +8,9 @@ export interface TokenPair { access_token: string; refresh_token: string; token_
 
 export interface Me {
   id: number; email: string; full_name: string | null; role: Role;
-  team_id: number | null; avatar_url: string | null; joined_at: string;
+  team_id: number | null; joined_at: string;
+  onboarding_completed_at: string | null;
+  language: string;
 }
 export interface TeamInfo { id: number; name: string }
 export interface CompanyInfo { id: number; name: string; logo_url: string | null; timezone: string }

@@ -5,6 +5,7 @@
  */
 import { router } from "expo-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Switch, Text, View } from "react-native";
 
 import { api, errorDetail } from "@/lib/api-client";
@@ -12,28 +13,15 @@ import { requestLocationPermissions } from "@/lib/location";
 import { registerForPush } from "@/lib/push";
 import { Button, Card, ErrorText, Screen, Subtitle, Title } from "@/components/ui";
 
+/** titleKey/bodyKey resolve under features.consent.items.* */
 const CONSENTS = [
-  {
-    type: "location" as const,
-    title: "Location while on the clock",
-    body: "Your location is recorded ONLY between check-in and check-out, to confirm attendance. " +
-      "While tracking is active your phone shows a persistent notification — that's an operating-system " +
-      "requirement, and it means tracking is never silent. It stops the moment you check out.",
-  },
-  {
-    type: "health" as const,
-    title: "Personal health tracking",
-    body: "Water, mood, breaks, steps, and sleep — visible to YOU only. Your manager and company can " +
-      "never see your individual entries; teams only ever see anonymous averages of 3 or more people.",
-  },
-  {
-    type: "notifications" as const,
-    title: "Notifications",
-    body: "Reminders to check in, submit your daily report, take breaks, and updates from your company.",
-  },
+  { type: "location" as const, titleKey: "locationTitle", bodyKey: "locationBody" },
+  { type: "health" as const, titleKey: "healthTitle", bodyKey: "healthBody" },
+  { type: "notifications" as const, titleKey: "notificationsTitle", bodyKey: "notificationsBody" },
 ];
 
 export default function Consent() {
+  const { t } = useTranslation();
   const [accepted, setAccepted] = useState<Record<string, boolean>>({ location: false, health: false, notifications: false });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -48,7 +36,7 @@ export default function Consent() {
       if (accepted.location) {
         const result = await requestLocationPermissions();
         if (accepted.location && !result.background) {
-          setError("Background location isn't available in this preview build — attendance will still work while the app is open. Full background tracking requires the installed app.");
+          setError(t("features.consent.backgroundLocationUnavailable"));
         }
       }
       if (accepted.notifications) await registerForPush();
@@ -62,12 +50,12 @@ export default function Consent() {
 
   return (
     <Screen>
-      <Title>Before you start</Title>
-      <Subtitle>Each of these is your choice, recorded individually. You can work without any of them.</Subtitle>
+      <Title>{t("features.consent.title")}</Title>
+      <Subtitle>{t("features.consent.subtitle")}</Subtitle>
       {CONSENTS.map((consent) => (
         <Card key={consent.type} className="mt-4">
           <View className="flex-row items-center justify-between">
-            <Text className="flex-1 pr-3 font-sansbold text-[15px] text-ink">{consent.title}</Text>
+            <Text className="flex-1 pr-3 font-sansbold text-[15px] text-ink">{t(`features.consent.items.${consent.titleKey}`)}</Text>
             <Switch
               value={!!accepted[consent.type]}
               onValueChange={(value) => setAccepted((prev) => ({ ...prev, [consent.type]: value }))}
@@ -75,11 +63,11 @@ export default function Consent() {
               thumbColor="#6c4b36"
             />
           </View>
-          <Text className="mt-2 font-sans text-[13px] leading-5 text-faint">{consent.body}</Text>
+          <Text className="mt-2 font-sans text-[13px] leading-5 text-faint">{t(`features.consent.items.${consent.bodyKey}`)}</Text>
         </Card>
       ))}
       {error && <ErrorText>{error}</ErrorText>}
-      <Button label="Save my choices" variant="dark" className="mt-6" loading={busy} onPress={submit} />
+      <Button label={t("features.consent.saveChoices")} variant="dark" className="mt-6" loading={busy} onPress={submit} />
     </Screen>
   );
 }

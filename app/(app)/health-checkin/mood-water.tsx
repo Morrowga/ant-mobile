@@ -2,24 +2,21 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Droplet, Smile } from "lucide-react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 
 import { api, errorDetail } from "@/lib/api-client";
 import { Button, ErrorText, Screen } from "@/components/ui";
 
-const WATER_OPTIONS = [
-  { ml: 100, label: "100ml" },
-  { ml: 200, label: "200ml" },
-  { ml: 300, label: "300ml" },
-  { ml: 500, label: "500ml" },
-];
+const WATER_OPTIONS = [100, 200, 300, 500];
 
+/** labelKey resolves under features.healthCheckin.moodOptions.* */
 const MOOD_OPTIONS = [
-  { value: 5, emoji: "😄", label: "Great" },
-  { value: 4, emoji: "🙂", label: "Good" },
-  { value: 3, emoji: "😐", label: "Okay" },
-  { value: 2, emoji: "😕", label: "Low" },
-  { value: 1, emoji: "😣", label: "Rough" },
+  { value: 5, emoji: "😄", labelKey: "great" },
+  { value: 4, emoji: "🙂", labelKey: "good" },
+  { value: 3, emoji: "😐", labelKey: "okay" },
+  { value: 2, emoji: "😕", labelKey: "low" },
+  { value: 1, emoji: "😣", labelKey: "rough" },
 ] as const;
 
 // Consistent card shadow used across both question cards -- gives real
@@ -35,6 +32,7 @@ const CARD_SHADOW = {
 /** Fired every ~2h during an active session (see health_reminders.py). One
  * combined survey -- both questions answered here, one Submit at the end. */
 export default function MoodWaterCheckin() {
+  const { t } = useTranslation();
   const { promptId } = useLocalSearchParams<{ promptId?: string }>();
   const promptIdNum = promptId ? Number(promptId) : undefined;
   const qc = useQueryClient();
@@ -66,7 +64,7 @@ export default function MoodWaterCheckin() {
           >
             <Text className="text-4xl">✓</Text>
           </View>
-          <Text className="mt-5 font-display text-xl text-espresso">Thanks — logged!</Text>
+          <Text className="mt-5 font-display text-xl text-espresso">{t("features.healthCheckin.thanksLogged")}</Text>
         </View>
       </Screen>
     );
@@ -79,10 +77,10 @@ export default function MoodWaterCheckin() {
       <View className="bg-cream pb-8 pt-3">
         {/* Header, with a small copper accent line under the title */}
         <View className="items-center">
-          <Text className="font-display text-[22px] text-espresso">Quick check-in</Text>
+          <Text className="font-display text-[22px] text-espresso">{t("features.healthCheckin.quickCheckin")}</Text>
           <View className="mt-2 h-[3px] w-10 rounded-full bg-copper" />
           <Text className="mt-3 text-center font-sans text-[13px] text-faint">
-            Two quick questions — takes a few seconds.
+            {t("features.healthCheckin.twoQuestionsNote")}
           </Text>
         </View>
 
@@ -92,21 +90,21 @@ export default function MoodWaterCheckin() {
             <View className="h-9 w-9 items-center justify-center rounded-full bg-[#eaf2f3]">
               <Droplet size={18} color="#3d7a85" fill="#3d7a85" />
             </View>
-            <Text className="flex-1 font-sansbold text-[15px] text-ink">How much water have you had?</Text>
+            <Text className="flex-1 font-sansbold text-[15px] text-ink">{t("features.healthCheckin.waterQuestion")}</Text>
           </View>
           <View className="mt-4 flex-row flex-wrap gap-2.5">
-            {WATER_OPTIONS.map((opt) => {
-              const selected = waterMl === opt.ml;
+            {WATER_OPTIONS.map((ml) => {
+              const selected = waterMl === ml;
               return (
                 <Pressable
-                  key={opt.ml}
-                  onPress={() => setWaterMl(opt.ml)}
+                  key={ml}
+                  onPress={() => setWaterMl(ml)}
                   className={`min-w-[70px] flex-1 items-center rounded-2xl border py-3.5 ${
                     selected ? "border-espresso bg-espresso" : "border-line bg-cream"
                   }`}
                 >
                   <Text className={`font-sansbold text-[14px] ${selected ? "text-cream" : "text-ink"}`}>
-                    {opt.label}
+                    {t("features.healthCheckin.mlValue", { value: ml })}
                   </Text>
                 </Pressable>
               );
@@ -127,7 +125,7 @@ export default function MoodWaterCheckin() {
             <View className="h-9 w-9 items-center justify-center rounded-full bg-[#f3e9de]">
               <Smile size={18} color="#a8672f" />
             </View>
-            <Text className="flex-1 font-sansbold text-[15px] text-ink">How are you feeling right now?</Text>
+            <Text className="flex-1 font-sansbold text-[15px] text-ink">{t("features.healthCheckin.moodQuestion")}</Text>
           </View>
           <View className="mt-5 flex-row justify-between">
             {MOOD_OPTIONS.map((opt) => {
@@ -143,7 +141,7 @@ export default function MoodWaterCheckin() {
                     <Text className="text-[26px]">{opt.emoji}</Text>
                   </View>
                   <Text className={`font-sans text-[11px] ${selected ? "font-sansbold text-espresso" : "text-faint"}`}>
-                    {opt.label}
+                    {t(`features.healthCheckin.moodOptions.${opt.labelKey}`)}
                   </Text>
                 </Pressable>
               );
@@ -154,7 +152,7 @@ export default function MoodWaterCheckin() {
         {error && <ErrorText>{error}</ErrorText>}
 
         <Button
-          label="Submit"
+          label={t("features.healthCheckin.submit")}
           variant="dark"
           className="mt-8"
           disabled={!canSubmit}

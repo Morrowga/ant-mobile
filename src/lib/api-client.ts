@@ -62,6 +62,7 @@ api.interceptors.response.use(
   },
 );
 
+
 export function isPlanGated(error: unknown): error is PlanGateError {
   return error instanceof PlanGateError;
 }
